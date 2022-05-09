@@ -1,0 +1,44 @@
+#root {
+  height: 100vh;
+  background-color: black;
+}
+
+.settings-container {
+  background-color: #333;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  padding: 10px;
+}
+
+.settings-header {
+  font-weight: bold;
+  color: #ccc;
+  padding-bottom: 5px;
+}
+
+.setting-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+label,
+legend {
+  color: #ccc;
+  padding: 1px;
+}
+
+.canvas-body-object p {
+  color: white;
+  user-select: none;
+}
+
+hr {
+  border: 1px solid #777;
+  width: 90%;
+}
