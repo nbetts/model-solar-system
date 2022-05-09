@@ -1,10 +1,11 @@
 import { Html, Line } from "@react-three/drei";
-import { PerspectiveCameraProps, useFrame } from "@react-three/fiber";
-import { MutableRefObject, Ref, useEffect, useRef, useState } from "react";
-import { Color, ColorRepresentation, Mesh, Vector3 } from "three";
+import { useFrame } from "@react-three/fiber";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { Mesh, Vector3 } from "three";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { BodyType } from "../data/bodies";
 import store from "../data/store";
+import { usePaused, useShowLabels, useShowOrbitPaths, useShowWireframes } from "../hooks/settings";
 
 type BodyProps = {
   controlsRef: MutableRefObject<OrbitControlsImpl>;
@@ -12,11 +13,12 @@ type BodyProps = {
 } & BodyType;
 
 const Body = (props: BodyProps) => {
-  const showLabels = store.useState((s) => s.settings.showLabels);
-  const showOrbitPaths = store.useState((s) => s.settings.showOrbitPaths);
-  const showWireframes = store.useState((s) => s.settings.showWireframes);
-  const ref = useRef<Mesh>(null!);
+  const [paused] = usePaused();
+  const [showLabels] = useShowLabels();
+  const [showOrbitPaths] = useShowOrbitPaths();
+  const [showWireframes] = useShowWireframes();
 
+  const ref = useRef<Mesh>(null!);
   const [orbitPathPoints, setOrbitPathPoints] = useState<Vector3[]>([]);
 
   useEffect(() => {
@@ -38,9 +40,9 @@ const Body = (props: BodyProps) => {
   }, [props.diameter, props.distanceFromSun]);
 
   useFrame(() => {
-    const { time, settings } = store.getRawState();
+    const { time } = store.getRawState();
 
-    if (!settings.paused) {
+    if (!paused) {
       const orbitalPeriodStep = (1 / props.orbitalPeriod) * time;
       const rotationPeriodStep = props.rotationPeriod * time;
 
@@ -50,11 +52,10 @@ const Body = (props: BodyProps) => {
       }
 
       ref.current.rotation.y = rotationPeriodStep;
+    }
 
-      if (props.focused) {
-        props.controlsRef.current.target;
-        props.controlsRef.current.target = ref.current.position;
-      }
+    if (props.focused) {
+      props.controlsRef.current.target = props.controlsRef.current.target.lerp(ref.current.position, 0.1);
     }
   });
 
@@ -62,9 +63,7 @@ const Body = (props: BodyProps) => {
 
   return (
     <>
-      {showOrbitPaths && orbitPathPoints.length > 0 && (
-        <Line points={orbitPathPoints} color={props.orbitColor} />
-      )}
+      {showOrbitPaths && orbitPathPoints.length > 0 && <Line points={orbitPathPoints} color={props.orbitColor} />}
       <mesh ref={ref}>
         {props.isLight && (
           <>

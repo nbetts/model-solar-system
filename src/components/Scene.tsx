@@ -1,27 +1,24 @@
-import {
-  GizmoHelper,
-  GizmoViewport,
-  OrbitControls,
-  PerspectiveCamera,
-  Stars,
-  Stats,
-} from "@react-three/drei";
+import { GizmoHelper, GizmoViewport, OrbitControls, PerspectiveCamera, Stars, Stats } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { bodies } from "../data/bodies";
 import store from "../data/store";
 import Body from "./Body";
+import { useFocusedBody, usePaused, useShowDebugInfo, useTimeSpeedModifier } from "../hooks/settings";
 
 const Scene = () => {
-  const focusedBody = store.useState((s) => s.settings.focusedBody);
-  const showDebugInfo = store.useState((s) => s.settings.showDebugInfo);
+  const [paused] = usePaused();
+  const [showDebugInfo] = useShowDebugInfo();
+  const [focusedBody] = useFocusedBody();
+  const [timeSpeedModifier] = useTimeSpeedModifier();
+
   const controlsRef = useRef<OrbitControlsImpl>(null!);
 
   useFrame(() => {
     store.update((s) => {
-      if (!s.settings.paused) {
-        const timeStep = s.settings.timeSpeedModifier / 75;
+      if (!paused) {
+        const timeStep = timeSpeedModifier / 75;
         s.time += Math.exp(timeStep) * 0.0000001;
       }
     });
@@ -34,12 +31,7 @@ const Scene = () => {
       <OrbitControls ref={controlsRef} />
       <Stars radius={10000} depth={100000} count={20000} factor={1200} />
       {bodies.map((body, index) => (
-        <Body
-          key={index}
-          controlsRef={controlsRef}
-          focused={focusedBody === body.displayName}
-          {...body}
-        />
+        <Body key={index} controlsRef={controlsRef} focused={focusedBody === body.displayName} {...body} />
       ))}
       {showDebugInfo && (
         <>

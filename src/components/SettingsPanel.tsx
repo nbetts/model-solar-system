@@ -1,122 +1,93 @@
+import { Button, Card, Checkbox, Radio, RadioGroup, Slider, Stack, Text } from "@mantine/core";
 import { bodies } from "../data/bodies";
-import store from "../data/store";
+import {
+  useFocusedBody,
+  usePaused,
+  useShowDebugInfo,
+  useShowLabels,
+  useShowOrbitPaths,
+  useShowWireframes,
+  useTimeSpeedModifier,
+} from "../hooks/settings";
 
 const SettingsPanel = () => {
-  const paused = store.useState((s) => s.settings.paused);
-  const focusedBody = store.useState((s) => s.settings.focusedBody);
-  const showLabels = store.useState((s) => s.settings.showLabels);
-  const showOrbitPaths = store.useState((s) => s.settings.showOrbitPaths);
-  const showWireframes = store.useState((s) => s.settings.showWireframes);
-  const showDebugInfo = store.useState((s) => s.settings.showDebugInfo);
-  const timeSpeedModifier = store.useState((s) => s.settings.timeSpeedModifier);
+  const [paused, setPaused] = usePaused();
+  const [showLabels, setShowLabels] = useShowLabels();
+  const [showOrbitPaths, setShowOrbitPaths] = useShowOrbitPaths();
+  const [showWireframes, setShowWireframes] = useShowWireframes();
+  const [showDebugInfo, setShowDebugInfo] = useShowDebugInfo();
+  const [focusedBody, setFocusedBody] = useFocusedBody();
+  const [timeSpeedModifier, setTimeSpeedModifier] = useTimeSpeedModifier();
+
+  const resetSettings = () => {
+    setPaused(false);
+    setShowLabels(true);
+    setShowOrbitPaths(true);
+    setShowWireframes(false);
+    setShowDebugInfo(false);
+    setFocusedBody("Sun");
+    setTimeSpeedModifier(250);
+  };
 
   return (
-    <div className="settings-container">
-      <span className="settings-header">Settings</span>
-      <div className="setting-container">
-        <input
-          id="time-speed-modifier-input"
-          type="range"
-          min={1}
-          max={750}
-          value={timeSpeedModifier}
-          onChange={(event) => {
-            store.update((s) => {
-              s.settings.timeSpeedModifier = parseInt(event.target.value);
-            });
-          }}
-        />
-        <label htmlFor="time-speed-modifier-input">Speed</label>
-      </div>
-      <div className="setting-container">
-        <input
-          id="paused-input"
-          type="checkbox"
+    <Card style={{ position: "absolute", top: "10px", right: "10px", zIndex: 1 }}>
+      <Stack spacing="xs">
+        <Text size="xl" weight="bold">
+          Settings
+        </Text>
+        <Checkbox
+          label="Paused"
+          color="cyan"
           checked={paused}
-          onChange={() => {
-            store.update((s) => {
-              s.settings.paused = !paused;
-            });
-          }}
+          onChange={(event) => setPaused(event.currentTarget.checked)}
         />
-        <label htmlFor="paused-input">Paused</label>
-      </div>
-      <hr />
-      <div className="setting-container">
-        <input
-          id="show-labels-input"
-          type="checkbox"
+        <Checkbox
+          label="Show labels"
+          color="cyan"
           checked={showLabels}
-          onChange={() => {
-            store.update((s) => {
-              s.settings.showLabels = !showLabels;
-            });
-          }}
+          onChange={(event) => setShowLabels(event.currentTarget.checked)}
         />
-        <label htmlFor="show-labels-input">Show labels</label>
-      </div>
-      <div className="setting-container">
-        <input
-          id="show-orbit-paths-input"
-          type="checkbox"
+        <Checkbox
+          label="Show orbits"
+          color="cyan"
           checked={showOrbitPaths}
-          onChange={() => {
-            store.update((s) => {
-              s.settings.showOrbitPaths = !showOrbitPaths;
-            });
-          }}
+          onChange={(event) => setShowOrbitPaths(event.currentTarget.checked)}
         />
-        <label htmlFor="show-orbit-paths-input">Show orbits</label>
-      </div>
-      <div className="setting-container">
-        <input
-          id="show-wireframes-input"
-          type="checkbox"
+        <Checkbox
+          label="Show wireframes"
+          color="cyan"
           checked={showWireframes}
-          onChange={() => {
-            store.update((s) => {
-              s.settings.showWireframes = !showWireframes;
-            });
-          }}
+          onChange={(event) => setShowWireframes(event.currentTarget.checked)}
         />
-        <label htmlFor="show-wireframes-input">Show wireframes</label>
-      </div>
-      <div className="setting-container">
-        <input
-          id="show-debug-info-input"
-          type="checkbox"
+        <Checkbox
+          label="Show debug info"
+          color="cyan"
           checked={showDebugInfo}
-          onChange={() => {
-            store.update((s) => {
-              s.settings.showDebugInfo = !showDebugInfo;
-            });
-          }}
+          onChange={(event) => setShowDebugInfo(event.currentTarget.checked)}
         />
-        <label htmlFor="show-debug-info-input">Show debug info</label>
-      </div>
-      <hr />
-      <fieldset>
-        <legend>Focused body</legend>
-        {bodies.map((body) => (
-          <>
-            <div className="setting-container">
-              <input
-                type="radio"
-                id={body.displayName}
-                name="body"
-                checked={body.displayName === focusedBody}
-                onChange={() => {
-                  store.update((s) => {
-                    s.settings.focusedBody = body.displayName;
-                  });
-                }}
-              />
-              <label htmlFor={body.displayName}>{body.displayName}</label>
-            </div>
-          </>
-        ))}
-      </fieldset>
-    </div>
+        <hr />
+        <RadioGroup
+          orientation="vertical"
+          label="Focused body"
+          spacing="xs"
+          color="cyan"
+          size="sm"
+          value={focusedBody}
+          onChange={setFocusedBody}
+        >
+          {bodies.map(({ displayName }) => (
+            <Radio key={displayName} value={displayName} label={displayName} />
+          ))}
+        </RadioGroup>
+        <hr />
+        <Text>Simulation speed</Text>
+        <Slider value={timeSpeedModifier} onChange={setTimeSpeedModifier} min={1} max={750} />
+        <hr />
+        <Button variant="outline" color="cyan" onClick={resetSettings}>
+          Reset settings
+        </Button>
+      </Stack>
+    </Card>
   );
 };
 

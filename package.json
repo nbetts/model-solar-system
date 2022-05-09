@@ -8,9 +8,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mantine/core": "^4.2.4",
+    "@mantine/hooks": "^4.2.4",
     "@react-three/drei": "^9.7.1",
     "@react-three/fiber": "^8.0.13",
-    "modern-normalize": "^1.1.0",
     "pullstate": "^1.24.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -25,6 +26,6 @@
     "vite": "^2.9.7"
   },
   "prettier": {
-    "printWidth": 100
+    "printWidth": 120
   }
 }
