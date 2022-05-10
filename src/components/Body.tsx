@@ -22,10 +22,12 @@ const Body = (props: BodyProps) => {
   const [orbitPathPoints, setOrbitPathPoints] = useState<Vector3[]>([]);
 
   useEffect(() => {
+    // Initialize scale and position
     const scale = props.diameter * 0.0000001;
     ref.current.scale.x = scale;
     ref.current.scale.y = scale;
     ref.current.scale.z = scale;
+    ref.current.position.x = props.distanceFromSun;
 
     const points = new Array(200);
 

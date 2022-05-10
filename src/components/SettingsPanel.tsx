@@ -37,31 +37,31 @@ const SettingsPanel = () => {
         </Text>
         <Checkbox
           label="Paused"
-          color="cyan"
+          color="orange"
           checked={paused}
           onChange={(event) => setPaused(event.currentTarget.checked)}
         />
         <Checkbox
-          label="Show labels"
-          color="cyan"
+          label="Labels"
+          color="orange"
           checked={showLabels}
           onChange={(event) => setShowLabels(event.currentTarget.checked)}
         />
         <Checkbox
-          label="Show orbits"
-          color="cyan"
+          label="Orbits"
+          color="orange"
           checked={showOrbitPaths}
           onChange={(event) => setShowOrbitPaths(event.currentTarget.checked)}
         />
         <Checkbox
-          label="Show wireframes"
-          color="cyan"
+          label="Wireframes"
+          color="orange"
           checked={showWireframes}
           onChange={(event) => setShowWireframes(event.currentTarget.checked)}
         />
         <Checkbox
-          label="Show debug info"
-          color="cyan"
+          label="Debug info"
+          color="orange"
           checked={showDebugInfo}
           onChange={(event) => setShowDebugInfo(event.currentTarget.checked)}
         />
@@ -70,7 +70,7 @@ const SettingsPanel = () => {
           orientation="vertical"
           label="Focused body"
           spacing="xs"
-          color="cyan"
+          color="orange"
           size="sm"
           value={focusedBody}
           onChange={setFocusedBody}
@@ -80,10 +80,10 @@ const SettingsPanel = () => {
           ))}
         </RadioGroup>
         <hr />
-        <Text>Simulation speed</Text>
-        <Slider value={timeSpeedModifier} onChange={setTimeSpeedModifier} min={1} max={750} />
+        <Text size="sm">Simulation speed</Text>
+        <Slider value={timeSpeedModifier} onChange={setTimeSpeedModifier} min={1} max={750} color="orange" />
         <hr />
-        <Button variant="outline" color="cyan" onClick={resetSettings}>
+        <Button variant="outline" color="gray" onClick={resetSettings}>
           Reset settings
         </Button>
       </Stack>
