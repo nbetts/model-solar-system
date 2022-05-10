@@ -8,6 +8,7 @@ import store from "../data/store";
 import { useShowLabels, useShowOrbitPaths, useShowWireframes } from "../hooks/settings";
 
 type BodyProps = {
+  timeStepRef: MutableRefObject<number>;
   controlsRef: MutableRefObject<OrbitControlsImpl>;
   focused?: boolean;
 } & BodyType;
@@ -43,11 +44,12 @@ const Body = (props: BodyProps) => {
   }, [props.diameter, props.distanceFromSun]);
 
   useFrame(() => {
-    const { time, paused } = store.getRawState();
+    const { paused } = store.getRawState();
 
     if (!paused) {
-      const orbitalPeriodStep = (1 / props.orbitalPeriod) * time;
-      const rotationPeriodStep = props.rotationPeriod * time;
+      const timeStep = props.timeStepRef.current;
+      const orbitalPeriodStep = (1 / props.orbitalPeriod) * timeStep;
+      const rotationPeriodStep = props.rotationPeriod * timeStep;
 
       if (props.distanceFromSun) {
         ref.current.position.x = props.distanceFromSun * Math.sin(orbitalPeriodStep);
