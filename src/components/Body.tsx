@@ -5,7 +5,7 @@ import { Mesh, Vector3 } from "three";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { BodyType } from "../data/bodies";
 import store from "../data/store";
-import { usePaused, useShowLabels, useShowOrbitPaths, useShowWireframes } from "../hooks/settings";
+import { useShowLabels, useShowOrbitPaths, useShowWireframes } from "../hooks/settings";
 
 type BodyProps = {
   controlsRef: MutableRefObject<OrbitControlsImpl>;
@@ -13,7 +13,6 @@ type BodyProps = {
 } & BodyType;
 
 const Body = (props: BodyProps) => {
-  const [paused] = usePaused();
   const [showLabels] = useShowLabels();
   const [showOrbitPaths] = useShowOrbitPaths();
   const [showWireframes] = useShowWireframes();
@@ -21,8 +20,10 @@ const Body = (props: BodyProps) => {
   const ref = useRef<Mesh>(null!);
   const [orbitPathPoints, setOrbitPathPoints] = useState<Vector3[]>([]);
 
+  /**
+   * Initialize scale, position and orbit paths.
+   */
   useEffect(() => {
-    // Initialize scale and position
     const scale = props.diameter * 0.0000001;
     ref.current.scale.x = scale;
     ref.current.scale.y = scale;
@@ -42,7 +43,7 @@ const Body = (props: BodyProps) => {
   }, [props.diameter, props.distanceFromSun]);
 
   useFrame(() => {
-    const { time } = store.getRawState();
+    const { time, paused } = store.getRawState();
 
     if (!paused) {
       const orbitalPeriodStep = (1 / props.orbitalPeriod) * time;
@@ -83,6 +84,7 @@ const Body = (props: BodyProps) => {
           <Html
             position={[0, 2, 0]}
             center
+            zIndexRange={[1, 0]}
             wrapperClass="canvas-body-object"
             distanceFactor={1}
             style={{ fontSize: scale * 1000, top: -(scale * 75) }}

@@ -5,10 +5,9 @@ import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { bodies } from "../data/bodies";
 import store from "../data/store";
 import Body from "./Body";
-import { useFocusedBody, usePaused, useShowDebugInfo, useTimeSpeedModifier } from "../hooks/settings";
+import { useFocusedBody, useShowDebugInfo, useTimeSpeedModifier } from "../hooks/settings";
 
 const Scene = () => {
-  const [paused] = usePaused();
   const [showDebugInfo] = useShowDebugInfo();
   const [focusedBody] = useFocusedBody();
   const [timeSpeedModifier] = useTimeSpeedModifier();
@@ -17,7 +16,7 @@ const Scene = () => {
 
   useFrame(() => {
     store.update((s) => {
-      if (!paused) {
+      if (!s.paused) {
         const timeStep = timeSpeedModifier / 75;
         s.time += Math.exp(timeStep) * 0.0000001;
       }
@@ -36,7 +35,7 @@ const Scene = () => {
       {showDebugInfo && (
         <>
           <Stats />
-          <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
+          <GizmoHelper alignment="bottom-left" margin={[80, 80]}>
             <GizmoViewport axisColors={["red", "green", "blue"]} labelColor="white" />
           </GizmoHelper>
         </>
