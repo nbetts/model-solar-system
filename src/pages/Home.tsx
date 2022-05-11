@@ -3,10 +3,17 @@ import { Canvas } from "@react-three/fiber";
 import { useState } from "react";
 import Scene from "../components/Scene";
 import SettingsPanel from "../components/SettingsPanel";
+import store from "../data/store";
 
 const Home = () => {
   const [startupModalOpened, setStartupModalOpened] = useState(true);
-  const closeModal = () => setStartupModalOpened(false);
+
+  const closeModal = () => {
+    setStartupModalOpened(false);
+    // store.update((s) => {
+    //   s.paused = false;
+    // });
+  };
 
   return (
     <>

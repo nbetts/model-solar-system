@@ -13,13 +13,20 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <MantineProvider theme={theme} withGlobalStyles withNormalizeCSS>
       <Global
-        styles={() => ({
+        styles={(theme) => ({
           "#root": {
             height: "100vh",
             backgroundColor: "black",
           },
           hr: {
             width: "95%",
+          },
+          ".canvas-body-object p": {
+            border: "1px solid black",
+            padding: "2px 6px",
+            borderRadius: "4px",
+            backgroundColor: theme.colors.dark[6],
+            userSelect: "none",
           },
         })}
       />

@@ -39,7 +39,7 @@ const SettingsPanel = () => {
     setShowWireframes(false);
     setShowDebugInfo(false);
     setFocusedBody("Sun");
-    setTimeSpeedModifier(250);
+    setTimeSpeedModifier(150);
   };
 
   useEffect(() => {
