@@ -37,7 +37,7 @@ const Scene = () => {
       <PerspectiveCamera ref={cameraRef} makeDefault near={0.0001} far={100000000} />
       {/* todo: add onChange to OrbitControls to track and display current zoom level (e?.target?.getDistance()) */}
       <OrbitControls ref={controlsRef} />
-      <Stars radius={10000} depth={100000} count={20000} factor={1200} />
+      <Stars radius={10000} depth={100000} count={20000} factor={1000} />
       {bodies.map((body, index) => (
         <Body key={index} cameraRef={cameraRef} controlsRef={controlsRef} timeStepRef={timeStepRef} {...body} />
       ))}

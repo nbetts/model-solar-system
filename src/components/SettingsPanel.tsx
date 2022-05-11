@@ -7,6 +7,7 @@ import {
   useFocusedBody,
   usePlayMusic,
   useShowDebugInfo,
+  useShowGodRays,
   useShowLabels,
   useShowOrbitPaths,
   useShowWireframes,
@@ -22,12 +23,13 @@ const SettingsPanel = () => {
   const [showLabels, setShowLabels] = useShowLabels();
   const [showOrbitPaths, setShowOrbitPaths] = useShowOrbitPaths();
   const [playMusic, setPlayMusic] = usePlayMusic();
+  const [showGodRays, setShowGodRays] = useShowGodRays();
   const [showWireframes, setShowWireframes] = useShowWireframes();
   const [showDebugInfo, setShowDebugInfo] = useShowDebugInfo();
   const [focusedBody, setFocusedBody] = useFocusedBody();
   const [timeSpeedModifier, setTimeSpeedModifier] = useTimeSpeedModifier();
 
-  const [, { duration, sound }] = useSound(musicFile, { volume: 0.5, autoplay: playMusic });
+  const [, { duration, sound }] = useSound(musicFile, { volume: 0.25, autoplay: playMusic });
 
   const resetSettings = () => {
     store.update((s) => {
@@ -36,10 +38,11 @@ const SettingsPanel = () => {
     setShowLabels(true);
     setShowOrbitPaths(true);
     setPlayMusic(true);
+    setShowGodRays(true);
     setShowWireframes(false);
     setShowDebugInfo(false);
-    setFocusedBody("Sun");
-    setTimeSpeedModifier(150);
+    setFocusedBody("Mars");
+    setTimeSpeedModifier(50);
   };
 
   useEffect(() => {
@@ -78,6 +81,11 @@ const SettingsPanel = () => {
           onChange={(event) => setShowOrbitPaths(event.currentTarget.checked)}
         />
         <Checkbox label="Music" checked={playMusic} onChange={(event) => setPlayMusic(event.currentTarget.checked)} />
+        <Checkbox
+          label="God rays"
+          checked={showGodRays}
+          onChange={(event) => setShowGodRays(event.currentTarget.checked)}
+        />
         <Checkbox
           label="Wireframes"
           checked={showWireframes}

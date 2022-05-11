@@ -16,7 +16,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         styles={(theme) => ({
           "#root": {
             height: "100vh",
-            backgroundColor: "black",
+            backgroundColor: "#050504",
           },
           hr: {
             width: "95%",

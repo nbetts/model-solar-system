@@ -1,12 +1,13 @@
 import { Html, Line, LineProps } from "@react-three/drei";
 import { PerspectiveCameraProps, useFrame } from "@react-three/fiber";
+import { Bloom, EffectComposer, GodRays } from "@react-three/postprocessing";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { Mesh, Vector3 } from "three";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { lerp } from "three/src/math/MathUtils";
 import { BodyType } from "../data/bodies";
 import store from "../data/store";
-import { useFocusedBody, useShowLabels, useShowOrbitPaths, useShowWireframes } from "../hooks/settings";
+import { useFocusedBody, useShowGodRays, useShowLabels, useShowOrbitPaths, useShowWireframes } from "../hooks/settings";
 
 type BodyProps = {
   timeStepRef: MutableRefObject<number>;
@@ -17,6 +18,7 @@ type BodyProps = {
 const Body = (props: BodyProps) => {
   const [showLabels] = useShowLabels();
   const [showOrbitPaths] = useShowOrbitPaths();
+  const [showGodRays] = useShowGodRays();
   const [showWireframes] = useShowWireframes();
   const [focusedBody] = useFocusedBody();
   const focused = focusedBody === props.displayName;
@@ -77,7 +79,7 @@ const Body = (props: BodyProps) => {
       props.controlsRef.current.target = bodyPosition;
 
       const position = props.cameraRef.current.position as Vector3;
-      position.x = lerp(position.x, bodyPosition.x + bodyRef.current.scale.x * 6, 0.25);
+      position.x = lerp(position.x, bodyPosition.x - bodyRef.current.scale.x * 6, 0.25);
       position.y = lerp(position.y, bodyPosition.y + bodyRef.current.scale.y * 1.5, 0.25);
       position.z = lerp(position.z, bodyPosition.z - bodyRef.current.scale.z * 6, 0.25);
     }
@@ -92,10 +94,22 @@ const Body = (props: BodyProps) => {
           <Line ref={orbitPathRef as any} points={orbitPathPoints} color={props.orbitColor} />
         )}
         <mesh ref={bodyRef} position={[0, 0, props.distanceFromSun]}>
-          {props.isLight && (
+          {props.isLight && bodyRef.current && (
             <>
               <ambientLight color={props.color} intensity={0.01} />
               <pointLight color={props.color} intensity={25} />
+              {showGodRays && (
+                <EffectComposer>
+                  <GodRays
+                    blur={3}
+                    decay={0.92}
+                    density={0.96}
+                    sun={new Mesh(bodyRef.current.geometry, bodyRef.current.material)}
+                  />
+                  <ambientLight color={props.color} intensity={0.01} />
+                  <pointLight color={props.color} intensity={25} />
+                </EffectComposer>
+              )}
             </>
           )}
           <sphereGeometry args={[1, 64, 32]} />
@@ -104,7 +118,7 @@ const Body = (props: BodyProps) => {
             color={props.color}
             emissive={props.isLight ? props.color : 0x000}
           />
-          {showLabels && (
+          {showLabels && !props.isLight && (
             <Html position={[0, 1.5, 0]} center zIndexRange={[1, 0]} wrapperClass="canvas-body-object">
               <p>{props.displayName}</p>
             </Html>
