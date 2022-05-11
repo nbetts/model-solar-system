@@ -89,16 +89,14 @@ const SettingsPanel = () => {
           onChange={(event) => setShowDebugInfo(event.currentTarget.checked)}
         />
         <hr />
-        <RadioGroup
-          orientation="vertical"
-          label="Focused body"
-          spacing="xs"
-          size="sm"
-          value={focusedBody}
-          onChange={setFocusedBody}
-        >
+        <RadioGroup orientation="vertical" label="Focused body" spacing="xs" size="sm" value={focusedBody}>
           {bodies.map(({ displayName }) => (
-            <Radio key={displayName} value={displayName} label={displayName} />
+            <Radio
+              key={displayName}
+              value={displayName}
+              label={displayName}
+              onClick={() => setFocusedBody(displayName)}
+            />
           ))}
         </RadioGroup>
         <hr />

@@ -8,7 +8,7 @@ import Body from "./Body";
 import { useShowDebugInfo, useTimeSpeedModifier } from "../hooks/settings";
 
 const Scene = () => {
-  const timeStepRef = useRef(1500000);
+  const timeStepRef = useRef(1300000);
   const cameraRef = useRef<PerspectiveCameraProps>(null!);
   const controlsRef = useRef<OrbitControlsImpl>(null!);
 

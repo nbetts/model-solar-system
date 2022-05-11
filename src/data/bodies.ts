@@ -13,10 +13,18 @@ export type BodyType = {
   orbitalInclination: number; // degrees
 };
 
+const normalizeBodyData = (bodies: BodyType[]) => {
+  return bodies.map((body) => ({
+    ...body,
+    axialTilt: (body.axialTilt * Math.PI) / 180,
+    orbitalInclination: (body.orbitalInclination * Math.PI) / 180,
+  }));
+};
+
 /**
  * data: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
  */
-export const bodies: BodyType[] = [
+export const bodies: BodyType[] = normalizeBodyData([
   {
     displayName: "Sun",
     isLight: true,
@@ -128,4 +136,4 @@ export const bodies: BodyType[] = [
     orbitalPeriod: 90560,
     orbitalInclination: 17.2,
   },
-];
+]);

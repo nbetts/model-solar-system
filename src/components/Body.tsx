@@ -53,10 +53,11 @@ const Body = (props: BodyProps) => {
     if (!paused) {
       const timeStep = props.timeStepRef.current;
       const orbitalPeriodStep = (1 / props.orbitalPeriod) * Math.PI * 2 * timeStep;
-      const rotationPeriodStep = props.rotationPeriod * Math.PI * 2 * timeStep;
+      const rotationPeriodStep = (24 / props.rotationPeriod) * Math.PI * 2 * timeStep; // 24 hours in a day
 
       if (props.distanceFromSun) {
         bodyRef.current.position.x = props.distanceFromSun * Math.sin(orbitalPeriodStep);
+        // bodyRef.current.position.y = props.distanceFromSun * Math.sin(orbitalPeriodStep) * props.orbitalInclination;
         bodyRef.current.position.z = props.distanceFromSun * Math.cos(orbitalPeriodStep);
       }
 
@@ -71,12 +72,14 @@ const Body = (props: BodyProps) => {
 
     if (focused && focusingBody) {
       // props.controlsRef.current.target = props.controlsRef.current.target.lerp(ref.current.position, 0.9);
-      props.controlsRef.current.target = bodyRef.current.position;
+      const bodyPosition = new Vector3();
+      bodyRef.current.getWorldPosition(bodyPosition);
+      props.controlsRef.current.target = bodyPosition;
 
       const position = props.cameraRef.current.position as Vector3;
-      position.x = lerp(position.x, bodyRef.current.position.x + bodyRef.current.scale.x * 6, 0.25);
-      position.y = lerp(position.y, bodyRef.current.position.y + bodyRef.current.scale.y * 1.5, 0.25);
-      position.z = lerp(position.z, bodyRef.current.position.z - bodyRef.current.scale.z * 6, 0.25);
+      position.x = lerp(position.x, bodyPosition.x + bodyRef.current.scale.x * 6, 0.25);
+      position.y = lerp(position.y, bodyPosition.y + bodyRef.current.scale.y * 1.5, 0.25);
+      position.z = lerp(position.z, bodyPosition.z - bodyRef.current.scale.z * 6, 0.25);
     }
   });
 
@@ -84,28 +87,30 @@ const Body = (props: BodyProps) => {
 
   return (
     <>
-      {showOrbitPaths && orbitPathPoints.length > 0 && (
-        <Line ref={orbitPathRef as any} points={orbitPathPoints} color={props.orbitColor} />
-      )}
-      <mesh ref={bodyRef} position={[0, 0, props.distanceFromSun]}>
-        {props.isLight && (
-          <>
-            <ambientLight color={props.color} intensity={0.01} />
-            <pointLight color={props.color} intensity={25} />
-          </>
+      <object3D rotation={[props.orbitalInclination, 0, 0]}>
+        {showOrbitPaths && orbitPathPoints.length > 0 && (
+          <Line ref={orbitPathRef as any} points={orbitPathPoints} color={props.orbitColor} />
         )}
-        <sphereGeometry args={[1, 64, 32]} />
-        <meshPhongMaterial
-          wireframe={showWireframes}
-          color={props.color}
-          emissive={props.isLight ? props.color : 0x000}
-        />
-        {showLabels && (
-          <Html position={[0, 1.5, 0]} center zIndexRange={[1, 0]} wrapperClass="canvas-body-object">
-            <p>{props.displayName}</p>
-          </Html>
-        )}
-      </mesh>
+        <mesh ref={bodyRef} position={[0, 0, props.distanceFromSun]}>
+          {props.isLight && (
+            <>
+              <ambientLight color={props.color} intensity={0.01} />
+              <pointLight color={props.color} intensity={25} />
+            </>
+          )}
+          <sphereGeometry args={[1, 64, 32]} />
+          <meshPhongMaterial
+            wireframe={showWireframes}
+            color={props.color}
+            emissive={props.isLight ? props.color : 0x000}
+          />
+          {showLabels && (
+            <Html position={[0, 1.5, 0]} center zIndexRange={[1, 0]} wrapperClass="canvas-body-object">
+              <p>{props.displayName}</p>
+            </Html>
+          )}
+        </mesh>
+      </object3D>
     </>
   );
 };
