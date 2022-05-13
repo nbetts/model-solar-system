@@ -1,13 +1,11 @@
-import { Html, Line, LineProps } from "@react-three/drei";
+import { Html, Line, LineProps, useTexture } from "@react-three/drei";
 import { PerspectiveCameraProps, useFrame } from "@react-three/fiber";
-import { Bloom, EffectComposer, GodRays } from "@react-three/postprocessing";
-import { MutableRefObject, useEffect, useRef, useState } from "react";
-import { Mesh, Vector3 } from "three";
+import { MutableRefObject, RefObject, useEffect, useRef, useState } from "react";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
-import { lerp } from "three/src/math/MathUtils";
+import { Vector3 } from "three/src/math/Vector3";
+import { Mesh } from "three/src/objects/Mesh";
 import { BodyType } from "../data/bodies";
 import store from "../data/store";
-import { useFocusedBody, useShowGodRays, useShowLabels, useShowOrbitPaths, useShowWireframes } from "../hooks/settings";
 
 type BodyProps = {
   timeStepRef: MutableRefObject<number>;
@@ -16,15 +14,15 @@ type BodyProps = {
 } & BodyType;
 
 const Body = (props: BodyProps) => {
-  const [showLabels] = useShowLabels();
-  const [showOrbitPaths] = useShowOrbitPaths();
-  const [showGodRays] = useShowGodRays();
-  const [showWireframes] = useShowWireframes();
-  const [focusedBody] = useFocusedBody();
+  const showLabels = store.useState((s) => s.userSettings.showLabels);
+  const showOrbitPaths = store.useState((s) => s.userSettings.showOrbitPaths);
+  const showWireframes = store.useState((s) => s.userSettings.showWireframes);
+  const focusedBody = store.useState((s) => s.userSettings.focusedBody);
   const focused = focusedBody === props.displayName;
 
   const bodyRef = useRef<Mesh>(null!);
   const orbitPathRef = useRef<LineProps>(null!);
+  const texture = useTexture(props.textureSrc);
   const [orbitPathPoints, setOrbitPathPoints] = useState<Vector3[]>([]);
 
   /**
@@ -50,9 +48,11 @@ const Body = (props: BodyProps) => {
   }, [props.diameter, props.distanceFromSun]);
 
   useFrame(() => {
-    const { paused, focusingBody } = store.getRawState();
+    const { appSettings, userSettings } = store.getRawState();
+    const oldBodyPosition = new Vector3();
+    bodyRef.current.getWorldPosition(oldBodyPosition);
 
-    if (!paused) {
+    if (!appSettings.paused) {
       const timeStep = props.timeStepRef.current;
       const orbitalPeriodStep = (1 / props.orbitalPeriod) * Math.PI * 2 * timeStep;
       const rotationPeriodStep = (24 / props.rotationPeriod) * Math.PI * 2 * timeStep; // 24 hours in a day
@@ -72,20 +72,24 @@ const Body = (props: BodyProps) => {
       }
     }
 
-    if (focused && focusingBody) {
-      // props.controlsRef.current.target = props.controlsRef.current.target.lerp(ref.current.position, 0.9);
+    if (userSettings.focusedBody === props.displayName) {
+      const cameraPosition = props.cameraRef.current.position as Vector3;
       const bodyPosition = new Vector3();
       bodyRef.current.getWorldPosition(bodyPosition);
       props.controlsRef.current.target = bodyPosition;
 
-      const position = props.cameraRef.current.position as Vector3;
-      position.x = lerp(position.x, bodyPosition.x - bodyRef.current.scale.x * 6, 0.25);
-      position.y = lerp(position.y, bodyPosition.y + bodyRef.current.scale.y * 1.5, 0.25);
-      position.z = lerp(position.z, bodyPosition.z - bodyRef.current.scale.z * 6, 0.25);
+      if (appSettings.focusingBody) {
+        cameraPosition.x = bodyPosition.x + bodyRef.current.scale.x * 4;
+        cameraPosition.y = bodyPosition.y + bodyRef.current.scale.y * 1.25;
+        cameraPosition.z = bodyPosition.z + bodyRef.current.scale.z * 4;
+        updateAppSetting("focusingBody", false);
+      } else {
+        cameraPosition.x += bodyPosition.x - oldBodyPosition.x;
+        cameraPosition.y += bodyPosition.y - oldBodyPosition.y;
+        cameraPosition.z += bodyPosition.z - oldBodyPosition.z;
+      }
     }
   });
-
-  const scale = bodyRef.current?.scale.x || 0;
 
   return (
     <>
@@ -97,27 +101,11 @@ const Body = (props: BodyProps) => {
           {props.isLight && bodyRef.current && (
             <>
               <ambientLight color={props.color} intensity={0.01} />
-              <pointLight color={props.color} intensity={25} />
-              {showGodRays && (
-                <EffectComposer>
-                  <GodRays
-                    blur={3}
-                    decay={0.92}
-                    density={0.96}
-                    sun={new Mesh(bodyRef.current.geometry, bodyRef.current.material)}
-                  />
-                  <ambientLight color={props.color} intensity={0.01} />
-                  <pointLight color={props.color} intensity={25} />
-                </EffectComposer>
-              )}
+              <pointLight color={props.color} intensity={3} decay={2} />
             </>
           )}
           <sphereGeometry args={[1, 64, 32]} />
-          <meshPhongMaterial
-            wireframe={showWireframes}
-            color={props.color}
-            emissive={props.isLight ? props.color : 0x000}
-          />
+          <meshPhongMaterial wireframe={showWireframes} map={texture} emissive={props.isLight ? props.color : 0x000} />
           {showLabels && !props.isLight && (
             <Html position={[0, 1.5, 0]} center zIndexRange={[1, 0]} wrapperClass="canvas-body-object">
               <p>{props.displayName}</p>
