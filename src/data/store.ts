@@ -1,6 +1,7 @@
 import { Store } from "pullstate";
 
 type AppSettings = {
+  showingStartupModal: boolean;
   paused: boolean;
   focusingBody: boolean; // whether or not a focus transition is occurring.
 };
@@ -22,6 +23,7 @@ type StoreProps = {
 };
 
 const DEFAULT_APP_SETTINGS: AppSettings = {
+  showingStartupModal: true,
   paused: false,
   focusingBody: false,
 } as const;
@@ -114,9 +116,9 @@ export const updateUserSetting = <T>(key: keyof UserSettings, value: T) => {
   });
 };
 
-export const resetSettings = () => {
+export const resetUserSettings = () => {
   store.update((s) => {
-    s.appSettings = DEFAULT_APP_SETTINGS;
+    s.appSettings.focusingBody = true;
     s.userSettings = DEFAULT_USER_SETTINGS;
   });
 };

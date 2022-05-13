@@ -5,7 +5,7 @@ import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { Vector3 } from "three/src/math/Vector3";
 import { Mesh } from "three/src/objects/Mesh";
 import { BodyType } from "../data/bodies";
-import store from "../data/store";
+import store, { updateAppSetting } from "../data/store";
 
 type BodyProps = {
   timeStepRef: MutableRefObject<number>;

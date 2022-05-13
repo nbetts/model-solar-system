@@ -1,8 +1,9 @@
-import { Button, Card, Checkbox, Radio, RadioGroup, Slider, Stack, Text } from "@mantine/core";
+import { Button, Card, Checkbox, Radio, RadioGroup, ScrollArea, Slider, Stack, Text } from "@mantine/core";
 import { useEffect } from "react";
+import GitHubButton from "react-github-btn";
 import useSound from "use-sound";
 import { bodies } from "../data/bodies";
-import store, { resetSettings, updateAppSetting, updateUserSetting } from "../data/store";
+import store, { resetUserSettings, updateAppSetting, updateUserSetting } from "../data/store";
 
 // "Ambient Relaxing music for You" by Amurich, on https://pixabay.com
 const musicFile =
@@ -25,8 +26,8 @@ const SettingsPanel = () => {
   }, [duration, userSettings.enableMusic]);
 
   return (
-    <Card style={{ position: "absolute", top: "10px", right: "10px", zIndex: 2 }}>
-      <Stack spacing="xs">
+    <Card style={{ position: "absolute", top: "1vh", right: "1vh", height: "98vh", zIndex: 2 }}>
+      <Stack spacing="xs" style={{ height: "100%", overflow: "scroll" }}>
         <Text size="xl" weight="bold">
           Settings
         </Text>
@@ -88,9 +89,21 @@ const SettingsPanel = () => {
           max={1000}
         />
         <hr />
-        <Button variant="outline" color="gray" onClick={resetSettings}>
+        <Button variant="outline" color="gray" p="sm" onClick={resetUserSettings}>
           Reset settings
         </Button>
+        <Text size="xl" weight="bold" pt="sm" style={{ marginTop: "auto" }}>
+          About
+        </Text>
+        {/* @ts-ignore */}
+        <GitHubButton
+          href="https://github.com/nbetts"
+          data-color-scheme="no-preference: dark; light: dark; dark: dark;"
+          data-size="large"
+          aria-label="Follow @nbetts on GitHub"
+        >
+          Follow @nbetts
+        </GitHubButton>
       </Stack>
     </Card>
   );

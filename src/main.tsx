@@ -17,6 +17,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           backgroundColor: "#030302",
         },
         hr: {
+          borderColor: theme.colors.dark[3],
           width: "95%",
         },
         ".canvas-body-object p": {

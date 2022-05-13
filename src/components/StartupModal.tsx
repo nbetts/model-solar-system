@@ -1,12 +1,12 @@
 import { Anchor, Button, Image, Modal, Stack, Text } from "@mantine/core";
 import { useState } from "react";
-import { updateAppSetting } from "../data/store";
+import store, { updateAppSetting } from "../data/store";
 
 const StartupModal = () => {
-  const [startupModalOpened, setStartupModalOpened] = useState(true);
+  const showingStartupModal = store.useState((s) => s.appSettings.showingStartupModal);
 
   const closeModal = () => {
-    setStartupModalOpened(false);
+    updateAppSetting("showingStartupModal", false);
     updateAppSetting("focusingBody", true);
   };
 
@@ -15,7 +15,7 @@ const StartupModal = () => {
       centered
       size="sm"
       zIndex={2}
-      opened={startupModalOpened}
+      opened={showingStartupModal}
       withCloseButton={false}
       overlayOpacity={0.5}
       overlayBlur={1.5}
