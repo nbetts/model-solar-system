@@ -2,8 +2,8 @@ import { Store } from "pullstate";
 
 type AppSettings = {
   showingStartupModal: boolean;
-  paused: boolean;
   focusingBody: boolean; // whether or not a focus transition is occurring.
+  cameraDistance: number;
 };
 
 type UserSettings = {
@@ -24,8 +24,8 @@ type StoreProps = {
 
 const DEFAULT_APP_SETTINGS: AppSettings = {
   showingStartupModal: true,
-  paused: false,
   focusingBody: false,
+  cameraDistance: 1,
 } as const;
 
 const DEFAULT_USER_SETTINGS: UserSettings = {

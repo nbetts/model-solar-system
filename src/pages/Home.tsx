@@ -1,14 +1,14 @@
 import { Canvas } from "@react-three/fiber";
+import InfoPanels from "../components/InfoPanels";
 import Scene from "../components/Scene";
-import SettingsPanel from "../components/SettingsPanel";
 import StartupModal from "../components/StartupModal";
 
 const Home = () => (
   <>
-    <Canvas shadows>
+    <Canvas shadows gl={{ logarithmicDepthBuffer: true }}>
       <Scene />
     </Canvas>
-    <SettingsPanel />
+    <InfoPanels />
     <StartupModal />
   </>
 );

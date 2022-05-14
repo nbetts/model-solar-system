@@ -3,7 +3,7 @@ import { PerspectiveCameraProps, useFrame } from "@react-three/fiber";
 import { createRef, useRef } from "react";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { bodies } from "../data/bodies";
-import store from "../data/store";
+import store, { updateAppSetting } from "../data/store";
 import Body from "./Body";
 import { EffectComposer, GodRays } from "@react-three/postprocessing";
 import SpaceBackground from "./SpaceBackground";
@@ -21,20 +21,22 @@ const Scene = () => {
   useFrame(() => {
     const { appSettings, userSettings } = store.getRawState();
 
-    if (!appSettings.paused) {
-      const timeStep = userSettings.timeSpeedModifier * 40;
-      timeStepRef.current += Math.exp(timeStep) * 0.0000001;
+    if (userSettings.timeSpeedModifier > 0) {
+      const timeStep = userSettings.timeSpeedModifier * 20;
+      timeStepRef.current += Math.exp(timeStep) * 0.00001;
     }
 
-    // console.log(controlsRef.current);
-    // console.log(controlsRef.current.getDistance());
+    const cameraDistance = controlsRef.current.getDistance();
+
+    if (userSettings.showDebugInfo && cameraDistance !== appSettings.cameraDistance) {
+      updateAppSetting("cameraDistance", cameraDistance);
+    }
   });
 
   return (
     <>
-      <PerspectiveCamera ref={cameraRef} makeDefault near={0.0001} far={100000000} />
-      {/* todo: add onChange to OrbitControls to track and display current zoom level (e?.target?.getDistance()) */}
-      <OrbitControls ref={controlsRef} />
+      <PerspectiveCamera ref={cameraRef} makeDefault near={0.0001} far={110000} />
+      <OrbitControls ref={controlsRef} maxDistance={100000} />
       <SpaceBackground />
       {bodies.map((body, index) => (
         <Body key={index} cameraRef={cameraRef} controlsRef={controlsRef} timeStepRef={timeStepRef} {...body} />

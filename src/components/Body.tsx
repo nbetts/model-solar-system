@@ -7,6 +7,8 @@ import { Mesh } from "three/src/objects/Mesh";
 import { BodyType } from "../data/bodies";
 import store, { updateAppSetting } from "../data/store";
 
+const TWO_PI = Math.PI * 2;
+
 type BodyProps = {
   timeStepRef: MutableRefObject<number>;
   cameraRef: MutableRefObject<PerspectiveCameraProps>;
@@ -17,8 +19,6 @@ const Body = (props: BodyProps) => {
   const showLabels = store.useState((s) => s.userSettings.showLabels);
   const showOrbitPaths = store.useState((s) => s.userSettings.showOrbitPaths);
   const showWireframes = store.useState((s) => s.userSettings.showWireframes);
-  const focusedBody = store.useState((s) => s.userSettings.focusedBody);
-  const focused = focusedBody === props.displayName;
 
   const bodyRef = useRef<Mesh>(null!);
   const orbitPathRef = useRef<LineProps>(null!);
@@ -38,7 +38,7 @@ const Body = (props: BodyProps) => {
     const points = new Array(200);
 
     for (let i = 0; i < points.length; i++) {
-      const step = (i / (points.length - 1)) * Math.PI * 2;
+      const step = (i / (points.length - 1)) * TWO_PI;
       const x = props.distanceFromSun * Math.sin(step);
       const z = props.distanceFromSun * Math.cos(step);
       points[i] = [x, 0, z];
@@ -52,10 +52,10 @@ const Body = (props: BodyProps) => {
     const oldBodyPosition = new Vector3();
     bodyRef.current.getWorldPosition(oldBodyPosition);
 
-    if (!appSettings.paused) {
+    if (userSettings.timeSpeedModifier > 0) {
       const timeStep = props.timeStepRef.current;
-      const orbitalPeriodStep = (1 / props.orbitalPeriod) * Math.PI * 2 * timeStep;
-      const rotationPeriodStep = (24 / props.rotationPeriod) * Math.PI * 2 * timeStep; // 24 hours in a day
+      const orbitalPeriodStep = props.orbitalPeriod * TWO_PI * timeStep;
+      const rotationPeriodStep = props.rotationPeriod * TWO_PI * timeStep; // 24 hours in a day
 
       if (props.distanceFromSun) {
         bodyRef.current.position.x = props.distanceFromSun * Math.sin(orbitalPeriodStep);
@@ -105,7 +105,12 @@ const Body = (props: BodyProps) => {
             </>
           )}
           <sphereGeometry args={[1, 64, 32]} />
-          <meshPhongMaterial wireframe={showWireframes} map={texture} emissive={props.isLight ? props.color : 0x000} />
+          <meshPhongMaterial
+            wireframe={showWireframes}
+            map={texture}
+            emissive={props.isLight ? props.color : 0x000}
+            shininess={props.albedo}
+          />
           {showLabels && !props.isLight && (
             <Html position={[0, 1.5, 0]} center zIndexRange={[1, 0]} wrapperClass="canvas-body-object">
               <p>{props.displayName}</p>

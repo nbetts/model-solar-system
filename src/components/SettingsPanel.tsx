@@ -10,7 +10,6 @@ const musicFile =
   "https://cdn.pixabay.com/download/audio/2022/01/30/audio_874db07cfd.mp3?filename=ambient-relaxing-music-for-you-15969.mp3";
 
 const SettingsPanel = () => {
-  const paused = store.useState((s) => s.appSettings.paused);
   const userSettings = store.useState((s) => s.userSettings);
 
   const [, { duration, sound }] = useSound(musicFile, { volume: 0.25, autoplay: userSettings.enableMusic });
@@ -26,16 +25,11 @@ const SettingsPanel = () => {
   }, [duration, userSettings.enableMusic]);
 
   return (
-    <Card style={{ position: "absolute", top: "1vh", right: "1vh", height: "98vh", zIndex: 2 }}>
+    <Card style={{ position: "absolute", top: "1vh", right: "6px", height: "98vh", zIndex: 2 }}>
       <Stack spacing="xs" style={{ height: "100%", overflow: "scroll" }}>
         <Text size="xl" weight="bold">
           Settings
         </Text>
-        <Checkbox
-          label="Paused"
-          checked={paused}
-          onChange={(event) => updateAppSetting("paused", event.currentTarget.checked)}
-        />
         <Checkbox
           label="Labels"
           checked={userSettings.showLabels}
@@ -67,6 +61,14 @@ const SettingsPanel = () => {
           onChange={(event) => updateUserSetting("enableGodRays", event.currentTarget.checked)}
         />
         <hr />
+        <Text size="sm">Simulation speed</Text>
+        <Slider
+          value={userSettings.timeSpeedModifier * 1000}
+          onChange={(value) => updateUserSetting("timeSpeedModifier", value / 1000)}
+          min={0}
+          max={1000}
+        />
+        <hr />
         <RadioGroup orientation="vertical" label="Focused body" spacing="xs" size="sm" value={userSettings.focusedBody}>
           {bodies.map(({ displayName }) => (
             <Radio
@@ -81,15 +83,7 @@ const SettingsPanel = () => {
           ))}
         </RadioGroup>
         <hr />
-        <Text size="sm">Simulation speed</Text>
-        <Slider
-          value={userSettings.timeSpeedModifier * 1000}
-          onChange={(value) => updateUserSetting("timeSpeedModifier", value / 1000)}
-          min={1}
-          max={1000}
-        />
-        <hr />
-        <Button variant="outline" color="gray" p="sm" onClick={resetUserSettings}>
+        <Button variant="outline" color="gray" onClick={resetUserSettings}>
           Reset settings
         </Button>
         <Text size="xl" weight="bold" pt="sm" style={{ marginTop: "auto" }}>

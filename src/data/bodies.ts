@@ -12,18 +12,23 @@ export type BodyType = {
   distanceFromSun: number; // 10^6 km
   orbitalPeriod: number; // days
   orbitalInclination: number; // degrees
+  albedo: number; // shininess of a body
 };
 
 const normalizeBodyData = (bodies: BodyType[]) => {
   return bodies.map((body) => ({
     ...body,
     axialTilt: (body.axialTilt * Math.PI) / 180,
+    rotationPeriod: 24 / body.rotationPeriod,
+    orbitalPeriod: 1 / body.orbitalPeriod,
     orbitalInclination: (body.orbitalInclination * Math.PI) / 180,
+    albedo: body.albedo * 100,
   }));
 };
 
 /**
  * data: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
+ * albedo data: https://en.wikipedia.org/wiki/Albedo
  * textures: https://www.solarsystemscope.com/textures/
  */
 export const bodies: BodyType[] = normalizeBodyData([
@@ -39,6 +44,7 @@ export const bodies: BodyType[] = normalizeBodyData([
     distanceFromSun: 0,
     orbitalPeriod: 1,
     orbitalInclination: 0,
+    albedo: 1,
   },
   {
     displayName: "Mercury",
@@ -51,6 +57,7 @@ export const bodies: BodyType[] = normalizeBodyData([
     distanceFromSun: 57.9,
     orbitalPeriod: 88.0,
     orbitalInclination: 7.0,
+    albedo: 0.142,
   },
   {
     displayName: "Venus",
@@ -63,6 +70,7 @@ export const bodies: BodyType[] = normalizeBodyData([
     distanceFromSun: 108.2,
     orbitalPeriod: 224.7,
     orbitalInclination: 3.4,
+    albedo: 0.689,
   },
   {
     displayName: "Earth",
@@ -75,6 +83,7 @@ export const bodies: BodyType[] = normalizeBodyData([
     distanceFromSun: 149.6,
     orbitalPeriod: 365.2,
     orbitalInclination: 0.0,
+    albedo: 0.434,
   },
   {
     displayName: "Mars",
@@ -87,6 +96,7 @@ export const bodies: BodyType[] = normalizeBodyData([
     distanceFromSun: 228.0,
     orbitalPeriod: 687.0,
     orbitalInclination: 1.8,
+    albedo: 0.17,
   },
   {
     displayName: "Jupiter",
@@ -99,6 +109,7 @@ export const bodies: BodyType[] = normalizeBodyData([
     distanceFromSun: 778.5,
     orbitalPeriod: 4331,
     orbitalInclination: 1.3,
+    albedo: 0.538,
   },
   {
     displayName: "Saturn",
@@ -111,6 +122,7 @@ export const bodies: BodyType[] = normalizeBodyData([
     distanceFromSun: 1432.0,
     orbitalPeriod: 10747,
     orbitalInclination: 2.5,
+    albedo: 0.499,
   },
   {
     displayName: "Uranus",
@@ -123,6 +135,7 @@ export const bodies: BodyType[] = normalizeBodyData([
     distanceFromSun: 2867.0,
     orbitalPeriod: 30589,
     orbitalInclination: 0.8,
+    albedo: 0.488,
   },
   {
     displayName: "Neptune",
@@ -135,6 +148,7 @@ export const bodies: BodyType[] = normalizeBodyData([
     distanceFromSun: 4515.0,
     orbitalPeriod: 59800,
     orbitalInclination: 1.8,
+    albedo: 0.442,
   },
   {
     displayName: "Pluto",
@@ -147,5 +161,6 @@ export const bodies: BodyType[] = normalizeBodyData([
     distanceFromSun: 5906.4,
     orbitalPeriod: 90560,
     orbitalInclination: 17.2,
+    albedo: 0.52,
   },
 ]);
