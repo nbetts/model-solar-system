@@ -1,9 +1,9 @@
-import DebugPanel from "./DebugPanel";
+import StatsPanel from "./StatsPanel";
 import SettingsPanel from "./SettingsPanel";
 
 const InfoPanels = () => (
   <>
-    <DebugPanel />
+    <StatsPanel />
     <SettingsPanel />
   </>
 );

@@ -1,21 +1,16 @@
 import { Card, Text } from "@mantine/core";
-import store from "../data/store";
+import store from "src/data/store";
 
-const DebugPanel = () => {
+const StatsPanel = () => {
   const showDebugInfo = store.useState((s) => s.userSettings.showDebugInfo);
   const cameraDistance = store.useState((s) => s.appSettings.cameraDistance);
-
-  if (!showDebugInfo) {
-    return null;
-  }
-
   const distance = (cameraDistance * 1000000).toLocaleString(undefined, { maximumFractionDigits: 0 });
 
   return (
-    <Card p="xs" style={{ position: "absolute", top: "5px", left: "85px", zIndex: 2 }}>
+    <Card p="xs" style={{ position: "absolute", top: "6px", left: showDebugInfo ? "85px" : "6px", zIndex: 2 }}>
       <Text size="sm">{distance} km</Text>
     </Card>
   );
 };
 
-export default DebugPanel;
+export default StatsPanel;

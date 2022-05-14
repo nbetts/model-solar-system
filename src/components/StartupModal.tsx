@@ -1,5 +1,5 @@
 import { Anchor, Button, Image, Modal, Stack, Text } from "@mantine/core";
-import store, { updateAppSetting } from "../data/store";
+import store, { updateAppSetting } from "src/data/store";
 
 const StartupModal = () => {
   const showingStartupModal = store.useState((s) => s.appSettings.showingStartupModal);
@@ -32,7 +32,7 @@ const StartupModal = () => {
           </Anchor>
         </Text>
         <Text align="center" my="lg">
-          A model solar system built with React, React Three Fiber and Three.js.
+          A model solar system built with Three.js, React and React Three Fiber.
         </Text>
         <Button data-autofocus onClick={closeModal}>
           Jump in!

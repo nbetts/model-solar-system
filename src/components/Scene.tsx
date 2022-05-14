@@ -1,18 +1,16 @@
-import { GizmoHelper, GizmoViewport, OrbitControls, PerspectiveCamera, Stats } from "@react-three/drei";
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { PerspectiveCameraProps, useFrame } from "@react-three/fiber";
-import { createRef, useRef } from "react";
+import { createRef, useEffect, useRef } from "react";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
-import { bodies } from "../data/bodies";
-import store, { updateAppSetting } from "../data/store";
+import { bodies } from "src/data/bodies";
+import store, { updateAppSetting } from "src/data/store";
 import Body from "./Body";
-import { EffectComposer, GodRays } from "@react-three/postprocessing";
 import SpaceBackground from "./SpaceBackground";
 import { Mesh } from "three/src/objects/Mesh";
+import DebugInfo from "./canvas/DebugInfo";
+import PostProcessingEffects from "./canvas/PostProcessingEffects";
 
 const Scene = () => {
-  const showDebugInfo = store.useState((s) => s.userSettings.showDebugInfo);
-  const enableGodRays = store.useState((s) => s.userSettings.enableGodRays);
-
   const timeStepRef = useRef(1300000);
   const cameraRef = useRef<PerspectiveCameraProps>(null!);
   const controlsRef = useRef<OrbitControlsImpl>(null!);
@@ -28,7 +26,7 @@ const Scene = () => {
 
     const cameraDistance = controlsRef.current.getDistance();
 
-    if (userSettings.showDebugInfo && cameraDistance !== appSettings.cameraDistance) {
+    if (cameraDistance !== appSettings.cameraDistance) {
       updateAppSetting("cameraDistance", cameraDistance);
     }
   });
@@ -41,14 +39,8 @@ const Scene = () => {
       {bodies.map((body, index) => (
         <Body key={index} cameraRef={cameraRef} controlsRef={controlsRef} timeStepRef={timeStepRef} {...body} />
       ))}
-      {showDebugInfo && (
-        <>
-          <Stats />
-          <GizmoHelper alignment="bottom-left" margin={[80, 80]}>
-            <GizmoViewport axisColors={["red", "green", "blue"]} labelColor="white" />
-          </GizmoHelper>
-        </>
-      )}
+      <DebugInfo />
+      <PostProcessingEffects />
     </>
   );
 };

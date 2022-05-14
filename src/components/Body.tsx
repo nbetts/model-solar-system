@@ -4,8 +4,8 @@ import { MutableRefObject, RefObject, useEffect, useRef, useState } from "react"
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { Vector3 } from "three/src/math/Vector3";
 import { Mesh } from "three/src/objects/Mesh";
-import { BodyType } from "../data/bodies";
-import store, { updateAppSetting } from "../data/store";
+import { BodyType } from "src/data/bodies";
+import store, { updateAppSetting } from "src/data/store";
 
 const TWO_PI = Math.PI * 2;
 
