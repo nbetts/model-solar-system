@@ -2,7 +2,13 @@ import { Card, Text } from "@mantine/core";
 import store from "../data/store";
 
 const DebugPanel = () => {
+  const showDebugInfo = store.useState((s) => s.userSettings.showDebugInfo);
   const cameraDistance = store.useState((s) => s.appSettings.cameraDistance);
+
+  if (!showDebugInfo) {
+    return null;
+  }
+
   const distance = (cameraDistance * 1000000).toLocaleString(undefined, { maximumFractionDigits: 0 });
 
   return (

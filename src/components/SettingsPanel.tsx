@@ -1,4 +1,5 @@
 import { Button, Card, Checkbox, Radio, RadioGroup, ScrollArea, Slider, Stack, Text } from "@mantine/core";
+import { useFullscreen } from "@mantine/hooks";
 import { useEffect } from "react";
 import GitHubButton from "react-github-btn";
 import useSound from "use-sound";
@@ -11,6 +12,7 @@ const musicFile =
 
 const SettingsPanel = () => {
   const userSettings = store.useState((s) => s.userSettings);
+  const { fullscreen, toggle: toggleFullscreen } = useFullscreen();
 
   const [, { duration, sound }] = useSound(musicFile, { volume: 0.25, autoplay: userSettings.enableMusic });
 
@@ -30,6 +32,7 @@ const SettingsPanel = () => {
         <Text size="xl" weight="bold">
           Settings
         </Text>
+        <Checkbox label="Fullscreen" checked={fullscreen} onChange={toggleFullscreen} />
         <Checkbox
           label="Labels"
           checked={userSettings.showLabels}

@@ -57,7 +57,9 @@ const store = new Store<StoreProps>({
     showDebugInfo: loadUserSetting("showDebugInfo", DEFAULT_USER_SETTINGS.showDebugInfo),
     enableMusic: loadUserSetting("enableMusic", DEFAULT_USER_SETTINGS.enableMusic),
     enableGodRays: loadUserSetting("enableGodRays", DEFAULT_USER_SETTINGS.enableGodRays),
-    timeSpeedModifier: loadUserSetting("timeSpeedModifier", DEFAULT_USER_SETTINGS.timeSpeedModifier),
+    timeSpeedModifier:
+      loadUserSetting("timeSpeedModifier", DEFAULT_USER_SETTINGS.timeSpeedModifier) ||
+      DEFAULT_USER_SETTINGS.timeSpeedModifier, // If saved value is 0, reset it back to the default value.
     focusedBody: loadUserSetting("focusedBody", DEFAULT_USER_SETTINGS.focusedBody),
   },
 });

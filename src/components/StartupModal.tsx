@@ -1,5 +1,4 @@
 import { Anchor, Button, Image, Modal, Stack, Text } from "@mantine/core";
-import { useState } from "react";
 import store, { updateAppSetting } from "../data/store";
 
 const StartupModal = () => {
