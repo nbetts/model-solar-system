@@ -39,6 +39,7 @@ const Scene = () => {
       {bodies.map((body, index) => (
         <Body
           key={index}
+          index={index}
           bodyRef={bodyRefs[index]}
           cameraRef={cameraRef}
           controlsRef={controlsRef}

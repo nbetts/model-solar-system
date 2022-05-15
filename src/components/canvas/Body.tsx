@@ -11,6 +11,7 @@ import { PointLight } from "three/src/lights/PointLight";
 const TWO_PI = Math.PI * 2;
 
 type BodyProps = {
+  index: number;
   bodyRef: RefObject<Mesh>;
   timeStepRef: MutableRefObject<number>;
   cameraRef: MutableRefObject<PerspectiveCameraProps>;
@@ -21,12 +22,24 @@ const Body = (props: BodyProps) => {
   const showLabels = store.useState((s) => s.userSettings.showLabels);
   const showOrbitPaths = store.useState((s) => s.userSettings.showOrbitPaths);
   const showWireframes = store.useState((s) => s.userSettings.showWireframes);
+  const actualScale = store.useState((s) => s.userSettings.actualScale);
 
   const { bodyRef } = props;
   const pointLightRef = useRef<PointLight>(null);
   const orbitPathRef = useRef<LineProps>(null!);
+  const distanceFromSunRef = useRef<number>(0);
   const texture = useTexture(props.textureSrc);
   const [orbitPathPoints, setOrbitPathPoints] = useState<Vector3[]>([]);
+
+  /**
+   * Initialize shadows.
+   */
+  useEffect(() => {
+    if (pointLightRef.current) {
+      // todo: make shadows smooth, they currently look pixelated
+      pointLightRef.current.shadow.camera.far = 6000;
+    }
+  }, [bodyRef.current]);
 
   /**
    * Initialize scale, position and orbit paths.
@@ -36,28 +49,31 @@ const Body = (props: BodyProps) => {
       return;
     }
 
-    const scale = props.diameter * 0.0000001;
+    let distanceFromSun = props.distanceFromSun;
+    let scale = props.diameter * 0.0000001;
+
+    if (!actualScale) {
+      distanceFromSun = props.displayName === "Sun" ? 0 : 250 + Math.pow(props.index, 2) * 20;
+      scale = props.displayName === "Sun" ? props.diameter * 0.0001 : props.diameter * 0.0005;
+    }
+
     bodyRef.current.scale.x = scale;
     bodyRef.current.scale.y = scale;
     bodyRef.current.scale.z = scale;
-    bodyRef.current.position.x = props.distanceFromSun;
+    bodyRef.current.position.x = distanceFromSun;
 
     const points = new Array(200);
 
     for (let i = 0; i < points.length; i++) {
       const step = (i / (points.length - 1)) * TWO_PI;
-      const x = props.distanceFromSun * Math.sin(step);
-      const z = props.distanceFromSun * Math.cos(step);
+      const x = distanceFromSun * Math.sin(step);
+      const z = distanceFromSun * Math.cos(step);
       points[i] = [x, 0, z];
     }
 
+    distanceFromSunRef.current = distanceFromSun;
     setOrbitPathPoints(points);
-
-    if (pointLightRef.current) {
-      // todo: make shadows smooth, they currently look pixelated
-      pointLightRef.current.shadow.camera.far = 6000;
-    }
-  }, [bodyRef.current, props.diameter, props.distanceFromSun]);
+  }, [bodyRef.current, actualScale, props.index, props.diameter, props.distanceFromSun]);
 
   useFrame(() => {
     if (!bodyRef.current) {
@@ -73,9 +89,9 @@ const Body = (props: BodyProps) => {
       const orbitalPeriodStep = props.orbitalPeriod * TWO_PI * timeStep;
       const rotationPeriodStep = props.rotationPeriod * TWO_PI * timeStep; // 24 hours in a day
 
-      if (props.distanceFromSun) {
-        bodyRef.current.position.x = props.distanceFromSun * Math.sin(orbitalPeriodStep);
-        bodyRef.current.position.z = props.distanceFromSun * Math.cos(orbitalPeriodStep);
+      if (distanceFromSunRef.current) {
+        bodyRef.current.position.x = distanceFromSunRef.current * Math.sin(orbitalPeriodStep);
+        bodyRef.current.position.z = distanceFromSunRef.current * Math.cos(orbitalPeriodStep);
       }
 
       bodyRef.current.rotation.x = props.axialTilt;
@@ -109,16 +125,11 @@ const Body = (props: BodyProps) => {
 
   return (
     <>
-      <object3D rotation={[props.orbitalInclination, 0, 0]}>
+      <object3D rotation={[actualScale ? props.orbitalInclination : 0, 0, 0]}>
         {showOrbitPaths && orbitPathPoints.length > 0 && (
           <Line ref={orbitPathRef as any} points={orbitPathPoints} color={props.orbitColor} />
         )}
-        <mesh
-          ref={bodyRef}
-          position={[0, 0, props.distanceFromSun]}
-          castShadow={!props.isLight}
-          receiveShadow={!props.isLight}
-        >
+        <mesh ref={bodyRef} castShadow={!props.isLight} receiveShadow={!props.isLight}>
           {props.isLight && bodyRef.current && (
             <>
               <ambientLight color={props.color} intensity={0.02} />

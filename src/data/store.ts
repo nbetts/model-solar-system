@@ -13,6 +13,7 @@ type UserSettings = {
   showDebugInfo: boolean;
   enableMusic: boolean;
   enableEffects: boolean;
+  actualScale: boolean;
   timeSpeedModifier: number; // range [0-1].
   focusedBody: string; // body display name.
 };
@@ -35,6 +36,7 @@ const DEFAULT_USER_SETTINGS: UserSettings = {
   showDebugInfo: false,
   enableMusic: true,
   enableEffects: true,
+  actualScale: false,
   timeSpeedModifier: 0.25,
   focusedBody: "Mars",
 } as const;
@@ -57,6 +59,7 @@ const store = new Store<StoreProps>({
     showDebugInfo: loadUserSetting("showDebugInfo", DEFAULT_USER_SETTINGS.showDebugInfo),
     enableMusic: loadUserSetting("enableMusic", DEFAULT_USER_SETTINGS.enableMusic),
     enableEffects: loadUserSetting("enableEffects", DEFAULT_USER_SETTINGS.enableEffects),
+    actualScale: loadUserSetting("actualScale", DEFAULT_USER_SETTINGS.actualScale),
     timeSpeedModifier:
       loadUserSetting("timeSpeedModifier", DEFAULT_USER_SETTINGS.timeSpeedModifier) ||
       DEFAULT_USER_SETTINGS.timeSpeedModifier, // If saved value is 0, reset it back to the default value.
@@ -92,6 +95,11 @@ store.subscribe(
 store.subscribe(
   (s) => s.userSettings.enableEffects,
   (value) => saveUserSetting("enableEffects", value)
+);
+
+store.subscribe(
+  (s) => s.userSettings.actualScale,
+  (value) => saveUserSetting("actualScale", value)
 );
 
 store.subscribe(

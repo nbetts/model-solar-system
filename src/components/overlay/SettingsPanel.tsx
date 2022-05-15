@@ -73,16 +73,6 @@ const SettingsPanel = () => {
                 onChange={(event) => updateUserSetting("showOrbitPaths", event.currentTarget.checked)}
               />
               <Checkbox
-                label="Wireframes"
-                checked={userSettings.showWireframes}
-                onChange={(event) => updateUserSetting("showWireframes", event.currentTarget.checked)}
-              />
-              <Checkbox
-                label="Debug info"
-                checked={userSettings.showDebugInfo}
-                onChange={(event) => updateUserSetting("showDebugInfo", event.currentTarget.checked)}
-              />
-              <Checkbox
                 label="Music"
                 checked={userSettings.enableMusic}
                 onChange={(event) => updateUserSetting("enableMusic", event.currentTarget.checked)}
@@ -91,6 +81,21 @@ const SettingsPanel = () => {
                 label="Effects"
                 checked={userSettings.enableEffects}
                 onChange={(event) => updateUserSetting("enableEffects", event.currentTarget.checked)}
+              />
+              <Checkbox
+                label="Actual scale"
+                checked={userSettings.actualScale}
+                onChange={(event) => updateUserSetting("actualScale", event.currentTarget.checked)}
+              />
+              <Checkbox
+                label="Wireframes"
+                checked={userSettings.showWireframes}
+                onChange={(event) => updateUserSetting("showWireframes", event.currentTarget.checked)}
+              />
+              <Checkbox
+                label="Debug info"
+                checked={userSettings.showDebugInfo}
+                onChange={(event) => updateUserSetting("showDebugInfo", event.currentTarget.checked)}
               />
               <hr />
               <Text size="sm">Simulation speed</Text>

@@ -2,8 +2,14 @@ import { Card, Text } from "@mantine/core";
 import store from "src/data/store";
 
 const StatsPanel = () => {
+  const actualScale = store.useState((s) => s.userSettings.actualScale);
   const showDebugInfo = store.useState((s) => s.userSettings.showDebugInfo);
   const cameraDistance = store.useState((s) => s.appSettings.cameraDistance);
+
+  if (!actualScale) {
+    return null;
+  }
+
   const distance = (cameraDistance * 1000000).toLocaleString(undefined, { maximumFractionDigits: 0 });
 
   return (
