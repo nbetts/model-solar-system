@@ -5,7 +5,7 @@ import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { Vector3 } from "three/src/math/Vector3";
 import { Mesh } from "three/src/objects/Mesh";
 import { BodyType } from "src/data/bodies";
-import store, { updateAppSetting } from "src/data/store";
+import store, { updateAppSetting, updateRefSetting } from "src/data/store";
 import { PointLight } from "three/src/lights/PointLight";
 
 const TWO_PI = Math.PI * 2;
@@ -38,6 +38,8 @@ const Body = (props: BodyProps) => {
     if (pointLightRef.current) {
       // todo: make shadows smooth, they currently look pixelated
       pointLightRef.current.shadow.camera.far = 6000;
+
+      updateRefSetting("lightRef", pointLightRef);
     }
   }, [bodyRef.current]);
 

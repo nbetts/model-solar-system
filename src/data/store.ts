@@ -1,4 +1,7 @@
 import { Store } from "pullstate";
+import { MutableRefObject, RefObject } from "react";
+import { PointLight } from "three/src/lights/PointLight";
+import { Mesh } from "three/src/objects/Mesh";
 
 type AppSettings = {
   showingStartupModal: boolean;
@@ -18,9 +21,16 @@ type UserSettings = {
   focusedBody: string; // body display name.
 };
 
+type CanvasObjectRefs = {
+  lightRef?: MutableRefObject<PointLight>;
+  godRaysMeshRef?: RefObject<Mesh>;
+  bodyMeshRefs?: RefObject<Mesh>[];
+};
+
 type StoreProps = {
   appSettings: AppSettings;
   userSettings: UserSettings;
+  canvasObjectRefs: CanvasObjectRefs;
 };
 
 const DEFAULT_APP_SETTINGS: AppSettings = {
@@ -65,6 +75,7 @@ const store = new Store<StoreProps>({
       DEFAULT_USER_SETTINGS.timeSpeedModifier, // If saved value is 0, reset it back to the default value.
     focusedBody: loadUserSetting("focusedBody", DEFAULT_USER_SETTINGS.focusedBody),
   },
+  canvasObjectRefs: {},
 });
 
 store.subscribe(
@@ -123,6 +134,13 @@ export const updateUserSetting = <T>(key: keyof UserSettings, value: T) => {
   store.update((s) => {
     //@ts-ignore
     s.userSettings[key] = value;
+  });
+};
+
+export const updateRefSetting = <T>(key: keyof CanvasObjectRefs, value: T) => {
+  store.update((s) => {
+    //@ts-ignore
+    s.canvasObjectRefs[key] = value;
   });
 };
 

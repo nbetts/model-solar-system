@@ -33,12 +33,16 @@ const SettingsPanel = () => {
   const { fullscreen, toggle: toggleFullscreen } = useFullscreen();
   const { classes } = useStyles();
 
-  const [, { duration, sound }] = useSound(musicFile, { volume: 0.25, autoplay: userSettings.enableMusic });
+  const [play, { duration, sound }] = useSound(musicFile, { volume: 0.25, autoplay: userSettings.enableMusic });
 
   useEffect(() => {
     if (duration) {
       if (userSettings.enableMusic) {
-        sound.fade(0, 1, 300);
+        if (sound.playing()) {
+          sound.fade(0, 1, 300);
+        } else {
+          play();
+        }
       } else {
         sound.fade(1, 0, 300);
       }

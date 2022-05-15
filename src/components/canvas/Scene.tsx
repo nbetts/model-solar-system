@@ -1,9 +1,9 @@
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { PerspectiveCameraProps, useFrame } from "@react-three/fiber";
-import { createRef, useRef } from "react";
+import { createRef, useEffect, useRef } from "react";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { bodies } from "src/data/bodies";
-import store, { updateAppSetting } from "src/data/store";
+import store, { updateAppSetting, updateRefSetting } from "src/data/store";
 import Body from "./Body";
 import SpaceBackground from "./SpaceBackground";
 import { Mesh } from "three/src/objects/Mesh";
@@ -15,6 +15,11 @@ const Scene = () => {
   const cameraRef = useRef<PerspectiveCameraProps>(null!);
   const controlsRef = useRef<OrbitControlsImpl>(null!);
   const bodyRefs = bodies.map(() => createRef<Mesh>());
+
+  useEffect(() => {
+    updateRefSetting("godRaysMeshRef", bodyRefs[0]);
+    updateRefSetting("bodyMeshRefs", bodyRefs);
+  }, []);
 
   useFrame(() => {
     const { appSettings, userSettings } = store.getRawState();
