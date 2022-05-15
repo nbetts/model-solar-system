@@ -6,6 +6,7 @@ import { Vector3 } from "three/src/math/Vector3";
 import { Mesh } from "three/src/objects/Mesh";
 import { BodyType } from "src/data/bodies";
 import store, { updateAppSetting } from "src/data/store";
+import { PointLight } from "three/src/lights/PointLight";
 
 const TWO_PI = Math.PI * 2;
 
@@ -22,6 +23,7 @@ const Body = (props: BodyProps) => {
   const showWireframes = store.useState((s) => s.userSettings.showWireframes);
 
   const { bodyRef } = props;
+  const pointLightRef = useRef<PointLight>(null);
   const orbitPathRef = useRef<LineProps>(null!);
   const texture = useTexture(props.textureSrc);
   const [orbitPathPoints, setOrbitPathPoints] = useState<Vector3[]>([]);
@@ -50,6 +52,11 @@ const Body = (props: BodyProps) => {
     }
 
     setOrbitPathPoints(points);
+
+    if (pointLightRef.current) {
+      // todo: make shadows smooth, they currently look pixelated
+      pointLightRef.current.shadow.camera.far = 6000;
+    }
   }, [bodyRef.current, props.diameter, props.distanceFromSun]);
 
   useFrame(() => {
@@ -106,11 +113,16 @@ const Body = (props: BodyProps) => {
         {showOrbitPaths && orbitPathPoints.length > 0 && (
           <Line ref={orbitPathRef as any} points={orbitPathPoints} color={props.orbitColor} />
         )}
-        <mesh ref={bodyRef} position={[0, 0, props.distanceFromSun]}>
+        <mesh
+          ref={bodyRef}
+          position={[0, 0, props.distanceFromSun]}
+          castShadow={!props.isLight}
+          receiveShadow={!props.isLight}
+        >
           {props.isLight && bodyRef.current && (
             <>
               <ambientLight color={props.color} intensity={0.02} />
-              <pointLight color={props.color} intensity={3} decay={2} />
+              <pointLight ref={pointLightRef} color={props.color} intensity={3} decay={2} castShadow />
             </>
           )}
           <sphereGeometry args={[1, 64, 32]} />
