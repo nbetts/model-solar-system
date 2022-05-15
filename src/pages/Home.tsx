@@ -1,7 +1,7 @@
 import { Canvas } from "@react-three/fiber";
-import InfoPanels from "src/components/InfoPanels";
-import Scene from "src/components/Scene";
-import StartupModal from "src/components/StartupModal";
+import InfoPanels from "src/components/overlay/InfoPanels";
+import Scene from "src/components/canvas/Scene";
+import StartupModal from "src/components/overlay/StartupModal";
 
 const Home = () => (
   <>

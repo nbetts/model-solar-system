@@ -1,13 +1,13 @@
 import store from "src/data/store";
 
 const PostProcessingEffects = () => {
-  const enableGodRays = store.useState((s) => s.userSettings.enableGodRays);
+  const enableEffects = store.useState((s) => s.userSettings.enableEffects);
 
   return null;
 
   {
     /* <EffectComposer>
-    {enableGodRays && bodyRefs[0].current ? (
+    {enableEffects && bodyRefs[0].current ? (
       <GodRays
         blur={3}
         decay={0.92}

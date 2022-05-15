@@ -12,7 +12,7 @@ type UserSettings = {
   showWireframes: boolean;
   showDebugInfo: boolean;
   enableMusic: boolean;
-  enableGodRays: boolean;
+  enableEffects: boolean;
   timeSpeedModifier: number; // range [0-1].
   focusedBody: string; // body display name.
 };
@@ -34,7 +34,7 @@ const DEFAULT_USER_SETTINGS: UserSettings = {
   showWireframes: false,
   showDebugInfo: false,
   enableMusic: true,
-  enableGodRays: true,
+  enableEffects: true,
   timeSpeedModifier: 0.25,
   focusedBody: "Mars",
 } as const;
@@ -56,7 +56,7 @@ const store = new Store<StoreProps>({
     showWireframes: loadUserSetting("showWireframes", DEFAULT_USER_SETTINGS.showWireframes),
     showDebugInfo: loadUserSetting("showDebugInfo", DEFAULT_USER_SETTINGS.showDebugInfo),
     enableMusic: loadUserSetting("enableMusic", DEFAULT_USER_SETTINGS.enableMusic),
-    enableGodRays: loadUserSetting("enableGodRays", DEFAULT_USER_SETTINGS.enableGodRays),
+    enableEffects: loadUserSetting("enableEffects", DEFAULT_USER_SETTINGS.enableEffects),
     timeSpeedModifier:
       loadUserSetting("timeSpeedModifier", DEFAULT_USER_SETTINGS.timeSpeedModifier) ||
       DEFAULT_USER_SETTINGS.timeSpeedModifier, // If saved value is 0, reset it back to the default value.
@@ -90,8 +90,8 @@ store.subscribe(
 );
 
 store.subscribe(
-  (s) => s.userSettings.enableGodRays,
-  (value) => saveUserSetting("enableGodRays", value)
+  (s) => s.userSettings.enableEffects,
+  (value) => saveUserSetting("enableEffects", value)
 );
 
 store.subscribe(

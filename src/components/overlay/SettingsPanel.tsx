@@ -88,9 +88,9 @@ const SettingsPanel = () => {
                 onChange={(event) => updateUserSetting("enableMusic", event.currentTarget.checked)}
               />
               <Checkbox
-                label="God rays"
-                checked={userSettings.enableGodRays}
-                onChange={(event) => updateUserSetting("enableGodRays", event.currentTarget.checked)}
+                label="Effects"
+                checked={userSettings.enableEffects}
+                onChange={(event) => updateUserSetting("enableEffects", event.currentTarget.checked)}
               />
               <hr />
               <Text size="sm">Simulation speed</Text>

@@ -7,8 +7,8 @@ import store, { updateAppSetting } from "src/data/store";
 import Body from "./Body";
 import SpaceBackground from "./SpaceBackground";
 import { Mesh } from "three/src/objects/Mesh";
-import DebugInfo from "./canvas/DebugInfo";
-import PostProcessingEffects from "./canvas/PostProcessingEffects";
+import DebugInfo from "./DebugInfo";
+import PostProcessingEffects from "./PostProcessingEffects";
 
 const Scene = () => {
   const timeStepRef = useRef(1300000);
