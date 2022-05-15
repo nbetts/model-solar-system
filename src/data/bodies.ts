@@ -34,7 +34,7 @@ const normalizeBodyData = (bodies: BodyType[]) => {
 export const bodies: BodyType[] = normalizeBodyData([
   {
     displayName: "Sun",
-    textureSrc: "/src/assets/2k_sun.jpeg",
+    textureSrc: "/assets/2k_sun.jpeg",
     isLight: true,
     color: 0xfdfbd3,
     orbitColor: 0xfdfbd3,
@@ -48,7 +48,7 @@ export const bodies: BodyType[] = normalizeBodyData([
   },
   {
     displayName: "Mercury",
-    textureSrc: "/src/assets/2k_mercury.jpeg",
+    textureSrc: "/assets/2k_mercury.jpeg",
     color: 0x1a1a1a,
     orbitColor: 0xa38f84,
     diameter: 4879,
@@ -61,7 +61,7 @@ export const bodies: BodyType[] = normalizeBodyData([
   },
   {
     displayName: "Venus",
-    textureSrc: "/src/assets/2k_venus_atmosphere.jpeg",
+    textureSrc: "/assets/2k_venus_atmosphere.jpeg",
     color: 0xe6e6e6,
     orbitColor: 0x9e8959,
     diameter: 12104,
@@ -74,7 +74,7 @@ export const bodies: BodyType[] = normalizeBodyData([
   },
   {
     displayName: "Earth",
-    textureSrc: "/src/assets/2k_earth.jpeg",
+    textureSrc: "/assets/2k_earth.jpeg",
     color: 0x2f6a69,
     orbitColor: 0x008545,
     diameter: 12756,
@@ -87,7 +87,7 @@ export const bodies: BodyType[] = normalizeBodyData([
   },
   {
     displayName: "Mars",
-    textureSrc: "/src/assets/2k_mars.jpeg",
+    textureSrc: "/assets/2k_mars.jpeg",
     color: 0x993d00,
     orbitColor: 0x9c3100,
     diameter: 6792,
@@ -100,7 +100,7 @@ export const bodies: BodyType[] = normalizeBodyData([
   },
   {
     displayName: "Jupiter",
-    textureSrc: "/src/assets/2k_jupiter.jpeg",
+    textureSrc: "/assets/2k_jupiter.jpeg",
     color: 0xb07f35,
     orbitColor: 0xa15f00,
     diameter: 142984,
@@ -113,7 +113,7 @@ export const bodies: BodyType[] = normalizeBodyData([
   },
   {
     displayName: "Saturn",
-    textureSrc: "/src/assets/2k_saturn.jpeg",
+    textureSrc: "/assets/2k_saturn.jpeg",
     color: 0xb08f36,
     orbitColor: 0xa1840e,
     diameter: 120536,
@@ -126,7 +126,7 @@ export const bodies: BodyType[] = normalizeBodyData([
   },
   {
     displayName: "Uranus",
-    textureSrc: "/src/assets/2k_uranus.jpeg",
+    textureSrc: "/assets/2k_uranus.jpeg",
     color: 0x5580aa,
     orbitColor: 0x51a6a9,
     diameter: 51118,
@@ -139,7 +139,7 @@ export const bodies: BodyType[] = normalizeBodyData([
   },
   {
     displayName: "Neptune",
-    textureSrc: "/src/assets/2k_neptune.jpeg",
+    textureSrc: "/assets/2k_neptune.jpeg",
     color: 0x366896,
     orbitColor: 0x002d92,
     diameter: 49528,
@@ -152,7 +152,7 @@ export const bodies: BodyType[] = normalizeBodyData([
   },
   {
     displayName: "Pluto",
-    textureSrc: "/src/assets/2k_ceres_fictional.jpeg",
+    textureSrc: "/assets/2k_ceres_fictional.jpeg",
     color: 0xdad7ce,
     orbitColor: 0x554535,
     diameter: 2376,

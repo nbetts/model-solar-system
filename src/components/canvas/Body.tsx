@@ -113,7 +113,7 @@ const Body = (props: BodyProps) => {
       props.controlsRef.current.target = bodyPosition;
 
       if (appSettings.focusingBody) {
-        cameraPosition.x = bodyPosition.x + bodyRef.current.scale.x * 4;
+        cameraPosition.x = bodyPosition.x - bodyRef.current.scale.x * 4;
         cameraPosition.y = bodyPosition.y + bodyRef.current.scale.y * 1.25;
         cameraPosition.z = bodyPosition.z + bodyRef.current.scale.z * 4;
         updateAppSetting("focusingBody", false);
