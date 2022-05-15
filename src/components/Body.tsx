@@ -10,6 +10,7 @@ import store, { updateAppSetting } from "src/data/store";
 const TWO_PI = Math.PI * 2;
 
 type BodyProps = {
+  bodyRef: RefObject<Mesh>;
   timeStepRef: MutableRefObject<number>;
   cameraRef: MutableRefObject<PerspectiveCameraProps>;
   controlsRef: MutableRefObject<OrbitControlsImpl>;
@@ -20,7 +21,7 @@ const Body = (props: BodyProps) => {
   const showOrbitPaths = store.useState((s) => s.userSettings.showOrbitPaths);
   const showWireframes = store.useState((s) => s.userSettings.showWireframes);
 
-  const bodyRef = useRef<Mesh>(null!);
+  const { bodyRef } = props;
   const orbitPathRef = useRef<LineProps>(null!);
   const texture = useTexture(props.textureSrc);
   const [orbitPathPoints, setOrbitPathPoints] = useState<Vector3[]>([]);
@@ -29,6 +30,10 @@ const Body = (props: BodyProps) => {
    * Initialize scale, position and orbit paths.
    */
   useEffect(() => {
+    if (!bodyRef.current) {
+      return;
+    }
+
     const scale = props.diameter * 0.0000001;
     bodyRef.current.scale.x = scale;
     bodyRef.current.scale.y = scale;
@@ -45,9 +50,13 @@ const Body = (props: BodyProps) => {
     }
 
     setOrbitPathPoints(points);
-  }, [props.diameter, props.distanceFromSun]);
+  }, [bodyRef.current, props.diameter, props.distanceFromSun]);
 
   useFrame(() => {
+    if (!bodyRef.current) {
+      return;
+    }
+
     const { appSettings, userSettings } = store.getRawState();
     const oldBodyPosition = new Vector3();
     bodyRef.current.getWorldPosition(oldBodyPosition);
@@ -59,10 +68,10 @@ const Body = (props: BodyProps) => {
 
       if (props.distanceFromSun) {
         bodyRef.current.position.x = props.distanceFromSun * Math.sin(orbitalPeriodStep);
-        // bodyRef.current.position.y = props.distanceFromSun * Math.sin(orbitalPeriodStep) * props.orbitalInclination;
         bodyRef.current.position.z = props.distanceFromSun * Math.cos(orbitalPeriodStep);
       }
 
+      bodyRef.current.rotation.x = props.axialTilt;
       bodyRef.current.rotation.y = rotationPeriodStep;
 
       // Rotate the orbit path along with the body so that an orbit path point is always in the body.
@@ -100,7 +109,7 @@ const Body = (props: BodyProps) => {
         <mesh ref={bodyRef} position={[0, 0, props.distanceFromSun]}>
           {props.isLight && bodyRef.current && (
             <>
-              <ambientLight color={props.color} intensity={0.01} />
+              <ambientLight color={props.color} intensity={0.02} />
               <pointLight color={props.color} intensity={3} decay={2} />
             </>
           )}

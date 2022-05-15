@@ -21,9 +21,9 @@ const StartupModal = () => {
       onClose={closeModal}
     >
       <Stack align="center" spacing="xs">
-        <Image width={100} height={100} src="/src/assets/favicon.svg" alt="React Solar System logo" />
+        <Image width={100} height={100} src="/src/assets/favicon.svg" alt="Model Solar System logo" />
         <Text size="xl" weight="bold">
-          React Solar System
+          Model Solar System
         </Text>
         <Text>
           by{" "}

@@ -1,6 +1,6 @@
-# React Solar System
+# Model Solar System
 
-A model solar system built with React, React Three Fiber and Three.js.
+A model solar system built with Three.js, React and React Three Fiber.
 
 ## Running the app
 

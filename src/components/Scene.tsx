@@ -1,6 +1,6 @@
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { PerspectiveCameraProps, useFrame } from "@react-three/fiber";
-import { createRef, useEffect, useRef } from "react";
+import { createRef, useRef } from "react";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { bodies } from "src/data/bodies";
 import store, { updateAppSetting } from "src/data/store";
@@ -37,7 +37,14 @@ const Scene = () => {
       <OrbitControls ref={controlsRef} maxDistance={100000} />
       <SpaceBackground />
       {bodies.map((body, index) => (
-        <Body key={index} cameraRef={cameraRef} controlsRef={controlsRef} timeStepRef={timeStepRef} {...body} />
+        <Body
+          key={index}
+          bodyRef={bodyRefs[index]}
+          cameraRef={cameraRef}
+          controlsRef={controlsRef}
+          timeStepRef={timeStepRef}
+          {...body}
+        />
       ))}
       <DebugInfo />
       <PostProcessingEffects />
