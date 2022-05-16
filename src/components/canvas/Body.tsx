@@ -1,5 +1,5 @@
 import { Html, Line, LineProps, useTexture } from "@react-three/drei";
-import { PerspectiveCameraProps, useFrame } from "@react-three/fiber";
+import { Object3DProps, PerspectiveCameraProps, useFrame } from "@react-three/fiber";
 import { MutableRefObject, RefObject, useEffect, useRef, useState } from "react";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { Vector3 } from "three/src/math/Vector3";
@@ -7,6 +7,7 @@ import { Mesh } from "three/src/objects/Mesh";
 import { BodyType } from "src/data/bodies";
 import store, { updateAppSetting, updateRefSetting } from "src/data/store";
 import { PointLight } from "three/src/lights/PointLight";
+import { Object3D } from "three/src/core/Object3D";
 
 const TWO_PI = Math.PI * 2;
 
@@ -23,10 +24,12 @@ const Body = (props: BodyProps) => {
   const showOrbitPaths = store.useState((s) => s.userSettings.showOrbitPaths);
   const showWireframes = store.useState((s) => s.userSettings.showWireframes);
   const actualScale = store.useState((s) => s.userSettings.actualScale);
+  const isSun = props.index === 0;
 
   const { bodyRef } = props;
   const pointLightRef = useRef<PointLight>(null);
   const orbitPathRef = useRef<LineProps>(null!);
+  const labelRef = useRef<Object3D>(null);
   const distanceFromSunRef = useRef<number>(0);
   const texture = useTexture(props.textureSrc);
   const [orbitPathPoints, setOrbitPathPoints] = useState<Vector3[]>([]);
@@ -55,7 +58,7 @@ const Body = (props: BodyProps) => {
     let scale = props.diameter * 0.0000001;
 
     if (!actualScale) {
-      distanceFromSun = props.displayName === "Sun" ? 0 : 250 + Math.pow(props.index, 2) * 20;
+      distanceFromSun = props.displayName === "Sun" ? 0 : 400 + Math.pow(props.index + 3, 2) * 20;
       scale = props.displayName === "Sun" ? props.diameter * 0.0001 : props.diameter * 0.0005;
     }
 
@@ -94,6 +97,14 @@ const Body = (props: BodyProps) => {
       if (distanceFromSunRef.current) {
         bodyRef.current.position.x = distanceFromSunRef.current * Math.sin(orbitalPeriodStep);
         bodyRef.current.position.z = distanceFromSunRef.current * Math.cos(orbitalPeriodStep);
+
+        const labelPosition = labelRef.current?.position;
+
+        if (labelPosition) {
+          labelPosition.x = oldBodyPosition.x;
+          labelPosition.y = bodyRef.current.scale.y * 1.5;
+          labelPosition.z = oldBodyPosition.z;
+        }
       }
 
       bodyRef.current.rotation.x = props.axialTilt;
@@ -131,8 +142,8 @@ const Body = (props: BodyProps) => {
         {showOrbitPaths && orbitPathPoints.length > 0 && (
           <Line ref={orbitPathRef as any} points={orbitPathPoints} color={props.orbitColor} />
         )}
-        <mesh ref={bodyRef} castShadow={!props.isLight} receiveShadow={!props.isLight}>
-          {props.isLight && bodyRef.current && (
+        <mesh ref={bodyRef} castShadow={!isSun} receiveShadow={!isSun}>
+          {isSun && bodyRef.current && (
             <>
               <ambientLight color={props.color} intensity={0.02} />
               <pointLight ref={pointLightRef} color={props.color} intensity={3} decay={2} castShadow />
@@ -142,15 +153,17 @@ const Body = (props: BodyProps) => {
           <meshPhongMaterial
             wireframe={showWireframes}
             map={texture}
-            emissive={props.isLight ? props.color : 0x000}
+            emissive={isSun ? props.color : 0x000000}
             shininess={props.albedo}
           />
-          {showLabels && !props.isLight && (
-            <Html position={[0, 1.5, 0]} center zIndexRange={[1, 0]} wrapperClass="canvas-body-object">
+        </mesh>
+        {showLabels && !isSun && (
+          <object3D ref={labelRef}>
+            <Html center zIndexRange={[1, 0]} wrapperClass="canvas-body-object">
               <p>{props.displayName}</p>
             </Html>
-          )}
-        </mesh>
+          </object3D>
+        )}
       </object3D>
     </>
   );

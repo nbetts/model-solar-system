@@ -3,7 +3,6 @@ import { ColorRepresentation } from "three/src/utils";
 export type BodyType = {
   displayName: string; // name
   textureSrc: string; // texture URL
-  isLight?: boolean; // is a light source
   color: ColorRepresentation; // hexadecimal
   orbitColor: ColorRepresentation; // hexadecimal
   diameter: number; // km
@@ -35,7 +34,6 @@ export const bodies: BodyType[] = normalizeBodyData([
   {
     displayName: "Sun",
     textureSrc: "/assets/2k_sun.jpeg",
-    isLight: true,
     color: 0xfdfbd3,
     orbitColor: 0xfdfbd3,
     diameter: 1392700,
