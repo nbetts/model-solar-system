@@ -1,17 +1,22 @@
 # Model Solar System
 
-A model solar system built with Three.js, React and React Three Fiber.
+A model Solar System built with [Three.js](https://threejs.org/), [React](https://reactjs.org/) and [React Three Fiber](https://docs.pmnd.rs/react-three-fiber/getting-started/introduction).
 
-## Running the app
+[Click here for an interactive demo!](https://model-solar-system.vercel.app/)
+
+![Model Solar System screenshot](model-solar-system-screenshot.png)
+
+## Run the app locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-## To do
+Then go to <http://localhost:3000>.
 
-- host on GitHub Pages
+## To do list
+
 - fix body labels not sitting above body when actual scale is enabled
 - fix camera / logarithmic buffer (not currently working) <https://threejs.org/examples/#webgl_camera_logarithmicdepthbuffer>
 - add lens flare: <https://threejs.org/examples/#webgl_lensflares>

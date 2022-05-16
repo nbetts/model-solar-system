@@ -1,6 +1,10 @@
 {
-  "name": "react-solar-system",
-  "version": "0.0.1",
+  "name": "model-solar-system",
+  "version": "1.0.0",
+  "author": {
+    "name": "Nathan Betts",
+    "url": "https://github.com/nbetts"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
