@@ -1,11 +1,11 @@
 import { Html, Line, LineProps, useTexture } from "@react-three/drei";
-import { Object3DProps, PerspectiveCameraProps, useFrame } from "@react-three/fiber";
+import { PerspectiveCameraProps, useFrame } from "@react-three/fiber";
 import { MutableRefObject, RefObject, useEffect, useRef, useState } from "react";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { Vector3 } from "three/src/math/Vector3";
 import { Mesh } from "three/src/objects/Mesh";
 import { BodyType } from "src/data/bodies";
-import store, { updateAppSetting, updateRefSetting } from "src/data/store";
+import store, { updateAppSetting, updateRefSetting, updateUserSetting } from "src/data/store";
 import { PointLight } from "three/src/lights/PointLight";
 import { Object3D } from "three/src/core/Object3D";
 
@@ -33,6 +33,13 @@ const Body = (props: BodyProps) => {
   const distanceFromSunRef = useRef<number>(0);
   const texture = useTexture(props.textureSrc);
   const [orbitPathPoints, setOrbitPathPoints] = useState<Vector3[]>([]);
+
+  const focusBody = () => {
+    if (store.getRawState().userSettings.focusedBody !== props.displayName) {
+      updateUserSetting("focusedBody", props.displayName);
+      updateAppSetting("focusingBody", true);
+    }
+  };
 
   /**
    * Initialize shadows.
@@ -86,6 +93,7 @@ const Body = (props: BodyProps) => {
     }
 
     const { appSettings, userSettings } = store.getRawState();
+
     const oldBodyPosition = new Vector3();
     bodyRef.current.getWorldPosition(oldBodyPosition);
 
@@ -140,9 +148,15 @@ const Body = (props: BodyProps) => {
     <>
       <object3D rotation={[actualScale ? props.orbitalInclination : 0, 0, 0]}>
         {showOrbitPaths && orbitPathPoints.length > 0 && (
-          <Line ref={orbitPathRef as any} points={orbitPathPoints} color={props.orbitColor} />
+          <Line
+            ref={orbitPathRef as any}
+            points={orbitPathPoints}
+            color={props.orbitColor}
+            transparent
+            // opacity={0.5}
+          />
         )}
-        <mesh ref={bodyRef} castShadow={!isSun} receiveShadow={!isSun}>
+        <mesh ref={bodyRef} castShadow={!isSun} receiveShadow={!isSun} onClick={focusBody}>
           {isSun && bodyRef.current && (
             <>
               <ambientLight color={props.color} intensity={0.02} />
@@ -157,10 +171,10 @@ const Body = (props: BodyProps) => {
             shininess={props.albedo}
           />
         </mesh>
-        {showLabels && !isSun && (
+        {showLabels && (
           <object3D ref={labelRef}>
-            <Html center zIndexRange={[1, 0]} wrapperClass="canvas-body-object">
-              <p>{props.displayName}</p>
+            <Html position={[0, 1, 0]} center zIndexRange={[1, 0]} wrapperClass="canvas-body-object">
+              <p onClick={focusBody}>{props.displayName}</p>
             </Html>
           </object3D>
         )}

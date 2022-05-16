@@ -123,8 +123,8 @@ const SettingsPanel = () => {
                     value={displayName}
                     label={displayName}
                     onClick={() => {
-                      updateAppSetting("focusingBody", true);
                       updateUserSetting("focusedBody", displayName);
+                      updateAppSetting("focusingBody", true);
                     }}
                   />
                 ))}
