@@ -92,11 +92,6 @@ const SettingsPanel = () => {
                 onChange={(event) => updateUserSetting("actualScale", event.currentTarget.checked)}
               />
               <Checkbox
-                label="Wireframes"
-                checked={userSettings.showWireframes}
-                onChange={(event) => updateUserSetting("showWireframes", event.currentTarget.checked)}
-              />
-              <Checkbox
                 label="Debug info"
                 checked={userSettings.showDebugInfo}
                 onChange={(event) => updateUserSetting("showDebugInfo", event.currentTarget.checked)}

@@ -12,7 +12,6 @@ type AppSettings = {
 type UserSettings = {
   showLabels: boolean;
   showOrbitPaths: boolean;
-  showWireframes: boolean;
   showDebugInfo: boolean;
   enableMusic: boolean;
   enableEffects: boolean;
@@ -42,7 +41,6 @@ const DEFAULT_APP_SETTINGS: AppSettings = {
 const DEFAULT_USER_SETTINGS: UserSettings = {
   showLabels: true,
   showOrbitPaths: true,
-  showWireframes: false,
   showDebugInfo: false,
   enableMusic: true,
   enableEffects: true,
@@ -65,7 +63,6 @@ const store = new Store<StoreProps>({
   userSettings: {
     showLabels: loadUserSetting("showLabels", DEFAULT_USER_SETTINGS.showLabels),
     showOrbitPaths: loadUserSetting("showOrbitPaths", DEFAULT_USER_SETTINGS.showOrbitPaths),
-    showWireframes: loadUserSetting("showWireframes", DEFAULT_USER_SETTINGS.showWireframes),
     showDebugInfo: loadUserSetting("showDebugInfo", DEFAULT_USER_SETTINGS.showDebugInfo),
     enableMusic: loadUserSetting("enableMusic", DEFAULT_USER_SETTINGS.enableMusic),
     enableEffects: loadUserSetting("enableEffects", DEFAULT_USER_SETTINGS.enableEffects),
@@ -86,11 +83,6 @@ store.subscribe(
 store.subscribe(
   (s) => s.userSettings.showOrbitPaths,
   (value) => saveUserSetting("showOrbitPaths", value)
-);
-
-store.subscribe(
-  (s) => s.userSettings.showWireframes,
-  (value) => saveUserSetting("showWireframes", value)
 );
 
 store.subscribe(

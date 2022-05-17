@@ -22,7 +22,6 @@ type BodyProps = {
 const Body = (props: BodyProps) => {
   const showLabels = store.useState((s) => s.userSettings.showLabels);
   const showOrbitPaths = store.useState((s) => s.userSettings.showOrbitPaths);
-  const showWireframes = store.useState((s) => s.userSettings.showWireframes);
   const actualScale = store.useState((s) => s.userSettings.actualScale);
   const isSun = props.index === 0;
 
@@ -65,8 +64,9 @@ const Body = (props: BodyProps) => {
     let scale = props.diameter * 0.0000001;
 
     if (!actualScale) {
-      distanceFromSun = props.displayName === "Sun" ? 0 : 400 + Math.pow(props.index + 3, 2) * 20;
-      scale = props.displayName === "Sun" ? props.diameter * 0.0001 : props.diameter * 0.0005;
+      distanceFromSun =
+        props.displayName === "Sun" ? 0 : 50 + Math.pow(props.index > 4 ? props.index * 2 : props.index + 3, 2) * 10;
+      scale = props.displayName === "Sun" ? props.diameter * 0.00005 : props.diameter * 0.001;
     }
 
     bodyRef.current.scale.x = scale;
@@ -164,12 +164,7 @@ const Body = (props: BodyProps) => {
             </>
           )}
           <sphereGeometry args={[1, 64, 32]} />
-          <meshPhongMaterial
-            wireframe={showWireframes}
-            map={texture}
-            emissive={isSun ? props.color : 0x000000}
-            shininess={props.albedo}
-          />
+          <meshPhongMaterial map={texture} emissive={isSun ? props.color : 0x000000} shininess={props.albedo} />
         </mesh>
         {showLabels && (
           <object3D ref={labelRef}>
