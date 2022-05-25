@@ -26,5 +26,4 @@ Then go to <http://localhost:3000>.
   - disable shadows
   - disable antialiasing
   - disable logarithmic depth buffer
-- directional light for actual scale
 - fix ring texture rendering

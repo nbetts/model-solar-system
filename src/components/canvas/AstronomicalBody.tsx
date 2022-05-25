@@ -10,6 +10,7 @@ import { Vector3 } from "three/src/math/Vector3";
 import { PointLight } from "three/src/lights/PointLight";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { DoubleSide } from "three/src/constants";
+import { DirectionalLight } from "three/src/lights/DirectionalLight";
 
 type Props = {
   cameraRef: MutableRefObject<PerspectiveCameraProps>;
@@ -26,7 +27,8 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
   const bodyOrbitRef = useRef<Object3D>(null!);
   const bodyPositionRef = useRef<Object3D>(null!);
   const bodyRef = useRef<Mesh>(null!);
-  const pointLightRef = useRef<PointLight>(null);
+  const pointLightRef = useRef<PointLight>(null!);
+  const directionalLightRef = useRef<DirectionalLight>(null!);
   const bodyTexture = props.textureSrc ? useTexture(props.textureSrc) : null;
   const ringTexture = props.ring?.textureSrc ? useTexture(props.ring.textureSrc) : null;
 
@@ -50,30 +52,30 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
   }, []);
 
   // useEffect(() => {
-  //   let distanceFromSun = props.distanceFromSun;
-  //   let scale = props.diameter * 0.0000001;
+  //   let orbitRadius = props.orbit.radius;
+  //   let scale = 1;
 
-  //   if (!actualScale) {
-  //     distanceFromSun =
-  //       props.name === "Sun" ? 0 : 50 + Math.pow(props.index > 4 ? props.index * 2 : props.index + 3, 2) * 10;
-  //     scale = props.name === "Sun" ? props.diameter * 0.00005 : props.diameter * 0.001;
-  //   }
+  //   // if (!actualScale) {
+  //   //   orbitRadius =
+  //   //     props.name === "Sun" ? 0 : 50 + Math.pow(props.index > 4 ? props.index * 2 : props.index + 3, 2) * 10;
+  //   //   scale = props.name === "Sun" ? props.diameter * 0.00005 : props.diameter * 0.001;
+  //   // }
 
   //   bodyRef.current.scale.x = scale;
   //   bodyRef.current.scale.y = scale;
   //   bodyRef.current.scale.z = scale;
-  //   bodyRef.current.position.x = distanceFromSun;
-  // }, []);
+  //   bodyRef.current.position.x = orbitRadius;
+  // }, [actualScale]);
 
   /**
    * Initialize lighting and shadows.
    */
   useEffect(() => {
-    if (pointLightRef.current) {
+    if (directionalLightRef.current) {
       // todo: make shadows smooth, they currently look pixelated
-      pointLightRef.current.shadow.camera.far = 100000000000;
+      directionalLightRef.current.shadow.camera.far = 100000000000;
     }
-  }, [pointLightRef.current]);
+  }, [directionalLightRef]);
 
   useFrame(() => {
     const { appSettings, userSettings } = store.getRawState();
@@ -104,6 +106,12 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
         cameraPosition.z += bodyPosition.z - oldBodyPosition.z;
       }
     }
+
+    if (props.isLight && actualScale) {
+      directionalLightRef.current.position.x = -controlsRef.current.target.x;
+      directionalLightRef.current.position.y = -controlsRef.current.target.y;
+      directionalLightRef.current.position.z = -controlsRef.current.target.z;
+    }
   });
 
   return (
@@ -118,12 +126,29 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
           />
         )}
         <object3D position={[props.orbit.radius, 0, 0]}>
-          {props.isLight && (
-            <pointLight ref={pointLightRef} color={props.color} intensity={2} distance={0} decay={2} castShadow />
-          )}
           <object3D ref={bodyPositionRef} rotation={[0, 0, -props.orbit.inclination]}>
+            {props.isLight && (
+              <>
+                <pointLight
+                  ref={pointLightRef}
+                  visible={!actualScale}
+                  color={props.color}
+                  intensity={2}
+                  distance={0}
+                  decay={2}
+                  castShadow
+                />
+                <directionalLight
+                  ref={directionalLightRef}
+                  visible={actualScale}
+                  color={props.color}
+                  intensity={2}
+                  castShadow
+                />
+              </>
+            )}
             {showLabels && (
-              <Html position={[0, props.radius * 2, 0]} center zIndexRange={[1, 0]} wrapperClass="canvas-body-object">
+              <Html position={[0, props.radius * 1.8, 0]} center zIndexRange={[1, 0]} wrapperClass="canvas-body-object">
                 <p onClick={focusBody}>{props.name}</p>
               </Html>
             )}
@@ -148,6 +173,7 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
                   >
                     <ringGeometry args={[props.ring.innerRadius * 2, props.ring.outerRadius * 2, 32]} />
                     <meshPhongMaterial
+                      transparent
                       side={DoubleSide}
                       color={ringTexture ? undefined : props.color}
                       map={ringTexture}
