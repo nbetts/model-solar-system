@@ -150,8 +150,8 @@ export const realSolarSystemData: AstronomicalBodyProps = {
       textureSrc: "/assets/2k_saturn.jpeg",
       ring: {
         color: 0xb08f36,
-        innerRadius: 60268,
-        outerRadius: 139826,
+        innerRadius: 60268 / 2,
+        outerRadius: 139826 / 2,
         textureSrc: "/assets/2k_saturn_ring_alpha.png",
       },
       orbit: {
