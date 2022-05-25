@@ -17,11 +17,15 @@ Then go to <http://localhost:3000>.
 
 ## To do list
 
-- fix body labels not sitting above body when actual scale is enabled
 - fix camera / logarithmic buffer (not currently working) <https://threejs.org/examples/#webgl_camera_logarithmicdepthbuffer>
 - add lens flare: <https://threejs.org/examples/#webgl_lensflares>
 - experiment with orbit line rendering and add opacity: <https://threejs.org/examples/#webgl_lines_fat>
 - selective bloom for bodies: <https://threejs.org/examples/#webgl_postprocessing_unreal_bloom_selective>
-- recursive body type and rendering (to allow support for moons and satellites)
-- add ring geometry for body ring such as for Saturn
 - add adaptive DPR (performance scaling): <https://github.com/pmndrs/drei#adaptivedpr>
+- add low/high performance toggle
+  - disable shadows
+  - disable antialiasing
+  - disable logarithmic depth buffer
+- fix ring texture rendering
+- improve shadow rendering
+- figure out why postprocessing is preventing the gizmo helper from displaying.

@@ -12,11 +12,11 @@ import {
   Text,
 } from "@mantine/core";
 import { useFullscreen } from "@mantine/hooks";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import GitHubButton from "react-github-btn";
 import useSound from "use-sound";
-import { bodies } from "src/data/bodies";
 import store, { resetUserSettings, updateAppSetting, updateUserSetting } from "src/data/store";
+import getBodyNames from "src/utils/getBodyNames";
 
 // "Ambient Relaxing music for You" by Amurich, on https://pixabay.com
 const musicFile =
@@ -30,6 +30,10 @@ const useStyles = createStyles(() => ({
 
 const SettingsPanel = () => {
   const userSettings = store.useState((s) => s.userSettings);
+  const solarSystemData = store.useState((s) => s.appSettings.solarSystemData);
+  const sun = userSettings.actualScale ? solarSystemData.real : solarSystemData.toon;
+
+  const [bodyNames] = useState(getBodyNames(sun));
   const { fullscreen, toggle: toggleFullscreen } = useFullscreen();
   const { classes } = useStyles();
 
@@ -56,7 +60,7 @@ const SettingsPanel = () => {
         top: 0,
         right: 0,
         zIndex: 2,
-        width: "180px",
+        width: "200px",
         height: "100%",
         overflow: "scroll",
       }}
@@ -92,11 +96,6 @@ const SettingsPanel = () => {
                 onChange={(event) => updateUserSetting("actualScale", event.currentTarget.checked)}
               />
               <Checkbox
-                label="Wireframes"
-                checked={userSettings.showWireframes}
-                onChange={(event) => updateUserSetting("showWireframes", event.currentTarget.checked)}
-              />
-              <Checkbox
                 label="Debug info"
                 checked={userSettings.showDebugInfo}
                 onChange={(event) => updateUserSetting("showDebugInfo", event.currentTarget.checked)}
@@ -117,13 +116,13 @@ const SettingsPanel = () => {
                 size="sm"
                 value={userSettings.focusedBody}
               >
-                {bodies.map(({ displayName }) => (
+                {bodyNames.map((name) => (
                   <Radio
-                    key={displayName}
-                    value={displayName}
-                    label={displayName}
+                    key={name}
+                    value={name}
+                    label={name}
                     onClick={() => {
-                      updateUserSetting("focusedBody", displayName);
+                      updateUserSetting("focusedBody", name);
                       updateAppSetting("focusingBody", true);
                     }}
                   />

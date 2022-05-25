@@ -6,7 +6,7 @@ import { Mesh } from "three/src/objects/Mesh";
 const PostProcessingEffects = () => {
   const enableEffects = store.useState((s) => s.userSettings.enableEffects);
   const actualScale = store.useState((s) => s.userSettings.actualScale);
-  const { lightRef, godRaysMeshRef, bodyMeshRefs } = store.useState((s) => s.canvasObjectRefs);
+  const { lightRef, lightSourceMeshRef, bodyMeshRefs } = store.useState((s) => s.componentRefs);
 
   if (!enableEffects) {
     return null;
@@ -14,8 +14,14 @@ const PostProcessingEffects = () => {
 
   return (
     <EffectComposer>
-      {godRaysMeshRef?.current ? (
-        <GodRays blur={3} decay={0.9} samples={actualScale ? 30 : 120} density={0.96} sun={godRaysMeshRef.current} />
+      {lightSourceMeshRef?.current ? (
+        <GodRays
+          blur={3}
+          decay={0.9}
+          samples={actualScale ? 30 : 120}
+          density={0.96}
+          sun={lightSourceMeshRef.current}
+        />
       ) : (
         <></>
       )}

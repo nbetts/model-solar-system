@@ -2,17 +2,23 @@ import { Store } from "pullstate";
 import { MutableRefObject, RefObject } from "react";
 import { PointLight } from "three/src/lights/PointLight";
 import { Mesh } from "three/src/objects/Mesh";
+import { AstronomicalBodyProps, realSolarSystemData, toonSolarSystemData } from "./astronomicalBodyData";
 
 type AppSettings = {
+  timeStepModifier: number;
+  timeStep: number;
   showingStartupModal: boolean;
   focusingBody: boolean; // whether or not a focus transition is occurring.
   cameraDistance: number;
+  solarSystemData: {
+    real: AstronomicalBodyProps;
+    toon: AstronomicalBodyProps;
+  };
 };
 
 type UserSettings = {
   showLabels: boolean;
   showOrbitPaths: boolean;
-  showWireframes: boolean;
   showDebugInfo: boolean;
   enableMusic: boolean;
   enableEffects: boolean;
@@ -21,28 +27,33 @@ type UserSettings = {
   focusedBody: string; // body display name.
 };
 
-type CanvasObjectRefs = {
+type ComponentRefs = {
   lightRef?: MutableRefObject<PointLight>;
-  godRaysMeshRef?: RefObject<Mesh>;
+  lightSourceMeshRef?: RefObject<Mesh>;
   bodyMeshRefs?: RefObject<Mesh>[];
 };
 
 type StoreProps = {
   appSettings: AppSettings;
   userSettings: UserSettings;
-  canvasObjectRefs: CanvasObjectRefs;
+  componentRefs: ComponentRefs;
 };
 
 const DEFAULT_APP_SETTINGS: AppSettings = {
+  timeStepModifier: 0,
+  timeStep: 0,
   showingStartupModal: true,
   focusingBody: false,
   cameraDistance: 1,
+  solarSystemData: {
+    real: realSolarSystemData,
+    toon: toonSolarSystemData,
+  },
 } as const;
 
 const DEFAULT_USER_SETTINGS: UserSettings = {
   showLabels: true,
   showOrbitPaths: true,
-  showWireframes: false,
   showDebugInfo: false,
   enableMusic: true,
   enableEffects: true,
@@ -65,17 +76,14 @@ const store = new Store<StoreProps>({
   userSettings: {
     showLabels: loadUserSetting("showLabels", DEFAULT_USER_SETTINGS.showLabels),
     showOrbitPaths: loadUserSetting("showOrbitPaths", DEFAULT_USER_SETTINGS.showOrbitPaths),
-    showWireframes: loadUserSetting("showWireframes", DEFAULT_USER_SETTINGS.showWireframes),
     showDebugInfo: loadUserSetting("showDebugInfo", DEFAULT_USER_SETTINGS.showDebugInfo),
     enableMusic: loadUserSetting("enableMusic", DEFAULT_USER_SETTINGS.enableMusic),
     enableEffects: loadUserSetting("enableEffects", DEFAULT_USER_SETTINGS.enableEffects),
     actualScale: loadUserSetting("actualScale", DEFAULT_USER_SETTINGS.actualScale),
-    timeSpeedModifier:
-      loadUserSetting("timeSpeedModifier", DEFAULT_USER_SETTINGS.timeSpeedModifier) ||
-      DEFAULT_USER_SETTINGS.timeSpeedModifier, // If saved value is 0, reset it back to the default value.
+    timeSpeedModifier: loadUserSetting("timeSpeedModifier", DEFAULT_USER_SETTINGS.timeSpeedModifier),
     focusedBody: loadUserSetting("focusedBody", DEFAULT_USER_SETTINGS.focusedBody),
   },
-  canvasObjectRefs: {},
+  componentRefs: {},
 });
 
 store.subscribe(
@@ -86,11 +94,6 @@ store.subscribe(
 store.subscribe(
   (s) => s.userSettings.showOrbitPaths,
   (value) => saveUserSetting("showOrbitPaths", value)
-);
-
-store.subscribe(
-  (s) => s.userSettings.showWireframes,
-  (value) => saveUserSetting("showWireframes", value)
 );
 
 store.subscribe(
@@ -137,10 +140,10 @@ export const updateUserSetting = <T>(key: keyof UserSettings, value: T) => {
   });
 };
 
-export const updateRefSetting = <T>(key: keyof CanvasObjectRefs, value: T) => {
+export const updateRefSetting = <T>(key: keyof ComponentRefs, value: T) => {
   store.update((s) => {
     //@ts-ignore
-    s.canvasObjectRefs[key] = value;
+    s.componentRefs[key] = value;
   });
 };
 

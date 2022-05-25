@@ -10,7 +10,7 @@ const StatsPanel = () => {
     return null;
   }
 
-  const distance = (cameraDistance * 1000000).toLocaleString(undefined, { maximumFractionDigits: 0 });
+  const distance = cameraDistance.toLocaleString(undefined, { maximumFractionDigits: 0 });
 
   return (
     <Card p="xs" style={{ position: "absolute", top: "6px", left: showDebugInfo ? "85px" : "6px", zIndex: 2 }}>
