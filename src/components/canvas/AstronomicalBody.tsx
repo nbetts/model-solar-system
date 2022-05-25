@@ -22,7 +22,7 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
   const showDebugInfo = store.useState((s) => s.userSettings.showDebugInfo);
   const showOrbitPaths = store.useState((s) => s.userSettings.showOrbitPaths);
   const actualScale = store.useState((s) => s.userSettings.actualScale);
-  const [orbitPathPoints] = useState(generateOrbitPoints(props.orbit.radius));
+  const [orbitPathPoints, setOrbitPathPoints] = useState<[number, number, number][]>([]);
 
   const bodyOrbitRef = useRef<Object3D>(null!);
   const bodyPositionRef = useRef<Object3D>(null!);
@@ -47,35 +47,30 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
 
     // Rotate the moon so that the correct side is facing the Earth.
     if (props.name === "Moon") {
-      bodyRef.current.rotation.y += Math.PI;
+      bodyRef.current.rotation.y += randomAngleAlongOrbit + Math.PI;
     }
   }, []);
 
-  // useEffect(() => {
-  //   let orbitRadius = props.orbit.radius;
-  //   let scale = 1;
+  useEffect(() => {
+    setOrbitPathPoints(generateOrbitPoints(props.orbit.radius));
+  }, [props.orbit.radius]);
 
-  //   // if (!actualScale) {
-  //   //   orbitRadius =
-  //   //     props.name === "Sun" ? 0 : 50 + Math.pow(props.index > 4 ? props.index * 2 : props.index + 3, 2) * 10;
-  //   //   scale = props.name === "Sun" ? props.diameter * 0.00005 : props.diameter * 0.001;
-  //   // }
-
-  //   bodyRef.current.scale.x = scale;
-  //   bodyRef.current.scale.y = scale;
-  //   bodyRef.current.scale.z = scale;
-  //   bodyRef.current.position.x = orbitRadius;
-  // }, [actualScale]);
+  useEffect(() => {
+    updateAppSetting("focusingBody", true);
+  }, [actualScale]);
 
   /**
    * Initialize lighting and shadows.
    */
   useEffect(() => {
+    if (pointLightRef.current) {
+      pointLightRef.current.shadow.camera.far = 1500000;
+    }
+
     if (directionalLightRef.current) {
-      // todo: make shadows smooth, they currently look pixelated
       directionalLightRef.current.shadow.camera.far = 100000000000;
     }
-  }, [directionalLightRef]);
+  }, [pointLightRef, directionalLightRef]);
 
   useFrame(() => {
     const { appSettings, userSettings } = store.getRawState();
@@ -117,7 +112,7 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
   return (
     <object3D rotation={[0, 0, props.orbit.inclination]}>
       <object3D ref={bodyOrbitRef}>
-        {showOrbitPaths && (
+        {showOrbitPaths && orbitPathPoints.length > 0 && (
           <Line
             points={orbitPathPoints}
             color={props.orbit.color}
@@ -135,7 +130,6 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
                   color={props.color}
                   intensity={2}
                   distance={0}
-                  decay={2}
                   castShadow
                 />
                 <directionalLight

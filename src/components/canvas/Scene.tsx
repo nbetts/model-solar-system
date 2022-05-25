@@ -6,10 +6,12 @@ import store, { updateAppSetting } from "src/data/store";
 import SpaceBackground from "./SpaceBackground";
 import DebugInfo from "./DebugInfo";
 import PostProcessingEffects from "./PostProcessingEffects";
-import { sun } from "src/data/astronomicalBodyData";
 import AstronomicalBody from "./AstronomicalBody";
 
 const Scene = () => {
+  const actualScale = store.useState((s) => s.userSettings.actualScale);
+  const solarSystemData = store.useState((s) => s.appSettings.solarSystemData);
+  const sun = actualScale ? solarSystemData.real : solarSystemData.toon;
   const cameraRef = useRef<PerspectiveCameraProps>(null!);
   const controlsRef = useRef<OrbitControlsImpl>(null!);
 

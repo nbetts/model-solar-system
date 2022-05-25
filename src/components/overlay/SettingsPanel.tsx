@@ -17,7 +17,6 @@ import GitHubButton from "react-github-btn";
 import useSound from "use-sound";
 import store, { resetUserSettings, updateAppSetting, updateUserSetting } from "src/data/store";
 import getBodyNames from "src/utils/getBodyNames";
-import { sun } from "src/data/astronomicalBodyData";
 
 // "Ambient Relaxing music for You" by Amurich, on https://pixabay.com
 const musicFile =
@@ -31,6 +30,9 @@ const useStyles = createStyles(() => ({
 
 const SettingsPanel = () => {
   const userSettings = store.useState((s) => s.userSettings);
+  const solarSystemData = store.useState((s) => s.appSettings.solarSystemData);
+  const sun = userSettings.actualScale ? solarSystemData.real : solarSystemData.toon;
+
   const [bodyNames] = useState(getBodyNames(sun));
   const { fullscreen, toggle: toggleFullscreen } = useFullscreen();
   const { classes } = useStyles();

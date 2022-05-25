@@ -2,6 +2,7 @@ import { Store } from "pullstate";
 import { MutableRefObject, RefObject } from "react";
 import { PointLight } from "three/src/lights/PointLight";
 import { Mesh } from "three/src/objects/Mesh";
+import { AstronomicalBodyProps, realSolarSystemData, toonSolarSystemData } from "./astronomicalBodyData";
 
 type AppSettings = {
   timeStepModifier: number;
@@ -9,6 +10,10 @@ type AppSettings = {
   showingStartupModal: boolean;
   focusingBody: boolean; // whether or not a focus transition is occurring.
   cameraDistance: number;
+  solarSystemData: {
+    real: AstronomicalBodyProps;
+    toon: AstronomicalBodyProps;
+  };
 };
 
 type UserSettings = {
@@ -40,6 +45,10 @@ const DEFAULT_APP_SETTINGS: AppSettings = {
   showingStartupModal: true,
   focusingBody: false,
   cameraDistance: 1,
+  solarSystemData: {
+    real: realSolarSystemData,
+    toon: toonSolarSystemData,
+  },
 } as const;
 
 const DEFAULT_USER_SETTINGS: UserSettings = {
