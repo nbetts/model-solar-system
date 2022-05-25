@@ -39,7 +39,9 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
 
   // Rotate the initial body orbit positions by a random amount around the orbit circle.
   useEffect(() => {
-    bodyOrbitRef.current.rotation.y += Math.floor(Math.random() * Math.PI * 2);
+    const randomAngleAlongOrbit = Math.floor(Math.random() * Math.PI * 2);
+    bodyOrbitRef.current.rotation.y += randomAngleAlongOrbit;
+    bodyPositionRef.current.rotation.y -= randomAngleAlongOrbit;
 
     // Rotate the moon so that the correct side is facing the Earth.
     if (props.name === "Moon") {
@@ -119,43 +121,45 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
           {props.isLight && (
             <pointLight ref={pointLightRef} color={props.color} intensity={2} distance={0} decay={2} castShadow />
           )}
-          <object3D ref={bodyPositionRef} rotation={[0, 0, props.axialTilt]}>
-            <object3D ref={bodyRef}>
-              <mesh castShadow={!props.isLight} receiveShadow={!props.isLight} onClick={focusBody}>
-                <sphereGeometry args={[props.radius, 64, 32]} />
-                <meshPhongMaterial
-                  color={bodyTexture ? undefined : props.color}
-                  map={bodyTexture}
-                  emissive={props.isLight ? props.color : 0x000000}
-                  shininess={props.albedo}
-                />
-                {showDebugInfo && <axesHelper args={[props.radius * 1.6]} />}
-              </mesh>
-              {props.ring && (
-                <mesh
-                  rotation={[Math.PI / 2, 0, 0]}
-                  castShadow={!props.isLight}
-                  receiveShadow={!props.isLight}
-                  onClick={focusBody}
-                >
-                  <ringGeometry args={[props.ring.innerRadius * 2, props.ring.outerRadius * 2, 32]} />
+          <object3D ref={bodyPositionRef} rotation={[0, 0, -props.orbit.inclination]}>
+            {showLabels && (
+              <Html position={[0, props.radius * 2, 0]} center zIndexRange={[1, 0]} wrapperClass="canvas-body-object">
+                <p onClick={focusBody}>{props.name}</p>
+              </Html>
+            )}
+            <object3D rotation={[0, 0, props.orbit.inclination + props.axialTilt]}>
+              <object3D ref={bodyRef}>
+                <mesh castShadow={!props.isLight} receiveShadow={!props.isLight} onClick={focusBody}>
+                  <sphereGeometry args={[props.radius, 64, 32]} />
                   <meshPhongMaterial
-                    side={DoubleSide}
-                    color={ringTexture ? undefined : props.color}
-                    map={ringTexture}
+                    color={bodyTexture ? undefined : props.color}
+                    map={bodyTexture}
+                    emissive={props.isLight ? props.color : 0x000000}
+                    shininess={props.albedo}
                   />
+                  {showDebugInfo && <axesHelper args={[props.radius * 1.6]} />}
                 </mesh>
-              )}
+                {props.ring && (
+                  <mesh
+                    rotation={[Math.PI / 2, 0, 0]}
+                    castShadow={!props.isLight}
+                    receiveShadow={!props.isLight}
+                    onClick={focusBody}
+                  >
+                    <ringGeometry args={[props.ring.innerRadius * 2, props.ring.outerRadius * 2, 32]} />
+                    <meshPhongMaterial
+                      side={DoubleSide}
+                      color={ringTexture ? undefined : props.color}
+                      map={ringTexture}
+                    />
+                  </mesh>
+                )}
+              </object3D>
             </object3D>
+            {props.satellites.map((satellite, index) => (
+              <AstronomicalBody key={index} {...satellite} cameraRef={cameraRef} controlsRef={controlsRef} />
+            ))}
           </object3D>
-          {showLabels && (
-            <Html position={[0, props.radius * 2, 0]} center zIndexRange={[1, 0]} wrapperClass="canvas-body-object">
-              <p onClick={focusBody}>{props.name}</p>
-            </Html>
-          )}
-          {props.satellites.map((satellite, index) => (
-            <AstronomicalBody key={index} {...satellite} cameraRef={cameraRef} controlsRef={controlsRef} />
-          ))}
         </object3D>
       </object3D>
     </object3D>
