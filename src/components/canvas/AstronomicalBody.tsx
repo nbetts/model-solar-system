@@ -3,7 +3,7 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { AstronomicalBodyProps } from "src/data/astronomicalBodyData";
 import { Html, Line, useTexture } from "@react-three/drei";
 import generateOrbitPoints from "../../utils/generateOrbitPoints";
-import store, { updateAppSetting, updateUserSetting } from "src/data/store";
+import store, { updateAppSetting, updateRefSetting, updateUserSetting } from "src/data/store";
 import { Mesh } from "three/src/objects/Mesh";
 import { Object3D } from "three/src/core/Object3D";
 import { Vector3 } from "three/src/math/Vector3";
@@ -26,7 +26,8 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
 
   const bodyOrbitRef = useRef<Object3D>(null!);
   const bodyPositionRef = useRef<Object3D>(null!);
-  const bodyRef = useRef<Mesh>(null!);
+  const bodyRef = useRef<Object3D>(null!);
+  const bodyMeshRef = useRef<Mesh>(null!);
   const pointLightRef = useRef<PointLight>(null!);
   const directionalLightRef = useRef<DirectionalLight>(null!);
   const bodyTexture = props.textureSrc ? useTexture(props.textureSrc) : null;
@@ -50,6 +51,10 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
       bodyRef.current.rotation.y += randomAngleAlongOrbit + Math.PI;
     }
   }, []);
+
+  useEffect(() => {
+    updateRefSetting("lightSourceMeshRef", bodyMeshRef);
+  }, [props.isLight]);
 
   useEffect(() => {
     setOrbitPathPoints(generateOrbitPoints(props.orbit.radius));
@@ -148,7 +153,7 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
             )}
             <object3D rotation={[0, 0, props.orbit.inclination + props.axialTilt]}>
               <object3D ref={bodyRef}>
-                <mesh castShadow={!props.isLight} receiveShadow={!props.isLight} onClick={focusBody}>
+                <mesh ref={bodyMeshRef} castShadow={!props.isLight} receiveShadow={!props.isLight} onClick={focusBody}>
                   <sphereGeometry args={[props.radius, 64, 32]} />
                   <meshPhongMaterial
                     color={bodyTexture ? undefined : props.color}

@@ -29,7 +29,7 @@ type UserSettings = {
 
 type ComponentRefs = {
   lightRef?: MutableRefObject<PointLight>;
-  godRaysMeshRef?: RefObject<Mesh>;
+  lightSourceMeshRef?: RefObject<Mesh>;
   bodyMeshRefs?: RefObject<Mesh>[];
 };
 
