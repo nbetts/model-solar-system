@@ -6,7 +6,7 @@ import { Mesh } from "three/src/objects/Mesh";
 const PostProcessingEffects = () => {
   const enableEffects = store.useState((s) => s.userSettings.enableEffects);
   const actualScale = store.useState((s) => s.userSettings.actualScale);
-  const { lightRef, godRaysMeshRef, bodyMeshRefs } = store.useState((s) => s.canvasObjectRefs);
+  const { lightRef, godRaysMeshRef, bodyMeshRefs } = store.useState((s) => s.componentRefs);
 
   if (!enableEffects) {
     return null;

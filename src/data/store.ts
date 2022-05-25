@@ -4,6 +4,8 @@ import { PointLight } from "three/src/lights/PointLight";
 import { Mesh } from "three/src/objects/Mesh";
 
 type AppSettings = {
+  timeStepModifier: number;
+  timeStep: number;
   showingStartupModal: boolean;
   focusingBody: boolean; // whether or not a focus transition is occurring.
   cameraDistance: number;
@@ -20,7 +22,7 @@ type UserSettings = {
   focusedBody: string; // body display name.
 };
 
-type CanvasObjectRefs = {
+type ComponentRefs = {
   lightRef?: MutableRefObject<PointLight>;
   godRaysMeshRef?: RefObject<Mesh>;
   bodyMeshRefs?: RefObject<Mesh>[];
@@ -29,10 +31,12 @@ type CanvasObjectRefs = {
 type StoreProps = {
   appSettings: AppSettings;
   userSettings: UserSettings;
-  canvasObjectRefs: CanvasObjectRefs;
+  componentRefs: ComponentRefs;
 };
 
 const DEFAULT_APP_SETTINGS: AppSettings = {
+  timeStepModifier: 0,
+  timeStep: 0,
   showingStartupModal: true,
   focusingBody: false,
   cameraDistance: 1,
@@ -67,12 +71,10 @@ const store = new Store<StoreProps>({
     enableMusic: loadUserSetting("enableMusic", DEFAULT_USER_SETTINGS.enableMusic),
     enableEffects: loadUserSetting("enableEffects", DEFAULT_USER_SETTINGS.enableEffects),
     actualScale: loadUserSetting("actualScale", DEFAULT_USER_SETTINGS.actualScale),
-    timeSpeedModifier:
-      loadUserSetting("timeSpeedModifier", DEFAULT_USER_SETTINGS.timeSpeedModifier) ||
-      DEFAULT_USER_SETTINGS.timeSpeedModifier, // If saved value is 0, reset it back to the default value.
+    timeSpeedModifier: loadUserSetting("timeSpeedModifier", DEFAULT_USER_SETTINGS.timeSpeedModifier),
     focusedBody: loadUserSetting("focusedBody", DEFAULT_USER_SETTINGS.focusedBody),
   },
-  canvasObjectRefs: {},
+  componentRefs: {},
 });
 
 store.subscribe(
@@ -129,10 +131,10 @@ export const updateUserSetting = <T>(key: keyof UserSettings, value: T) => {
   });
 };
 
-export const updateRefSetting = <T>(key: keyof CanvasObjectRefs, value: T) => {
+export const updateRefSetting = <T>(key: keyof ComponentRefs, value: T) => {
   store.update((s) => {
     //@ts-ignore
-    s.canvasObjectRefs[key] = value;
+    s.componentRefs[key] = value;
   });
 };
 

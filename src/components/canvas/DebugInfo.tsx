@@ -10,7 +10,7 @@ const DebugInfo = () => {
 
   return (
     <>
-      {/* todo: figure out why postprocessing is preventing the stats component from displaying.  */}
+      {/* todo: figure out why postprocessing is preventing the gizmo helper from displaying.  */}
       <Stats />
       <GizmoHelper alignment="bottom-left" margin={[80, 80]}>
         <GizmoViewport axisColors={["red", "green", "blue"]} labelColor="white" />
