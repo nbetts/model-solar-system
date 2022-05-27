@@ -37,7 +37,7 @@ const Scene = () => {
 
   return (
     <>
-      <PerspectiveCamera ref={cameraRef} makeDefault position={[3, 1, 3]} near={100} far={cameraFar} />
+      <PerspectiveCamera ref={cameraRef} makeDefault position={[3, 1, 3]} near={500} far={cameraFar} />
       <OrbitControls ref={controlsRef} maxDistance={maxDistance} />
       <SpaceBackground distance={spaceBackgroundDistance} starTwinkle={spaceBackgroundStarTwinkle} />
       <ambientLight color={sun.color} intensity={0.02} />

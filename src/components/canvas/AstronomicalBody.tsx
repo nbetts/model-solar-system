@@ -117,7 +117,7 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
         cameraPosition.z = bodyPosition.z + props.radius * 4;
 
         // Prevent the camera from being inside the bodies.
-        controlsRef.current.minDistance = props.radius + (cameraRef.current.near || 0);
+        controlsRef.current.minDistance = props.radius + cameraRef.current.near! * 2;
 
         updateAppSetting("focusingBody", false);
       } else {
@@ -165,7 +165,16 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
               </Html>
             )}
             <object3D rotation={[0, 0, props.orbit.inclination + props.axialTilt]}>
-              <object3D ref={bodyRef}>
+              <object3D
+                ref={bodyRef}
+                onPointerEnter={() => {
+                  document.body.style.cursor = "pointer";
+                }}
+                onPointerLeave={() => {
+                  document.body.style.cursor = "auto";
+                }}
+              >
+                {showDebugInfo && <axesHelper args={[props.radius * 1.6]} />}
                 <mesh ref={bodyMeshRef} castShadow={!props.isLight} receiveShadow={!props.isLight} onClick={focusBody}>
                   <sphereGeometry args={[props.radius, 64, 32]} />
                   <meshPhongMaterial
@@ -174,7 +183,6 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
                     emissive={props.isLight ? props.color : 0x000000}
                     shininess={props.albedo}
                   />
-                  {showDebugInfo && <axesHelper args={[props.radius * 1.6]} />}
                 </mesh>
                 {props.ring && (
                   <mesh
