@@ -16,7 +16,7 @@ const Scene = () => {
   const controlsRef = useRef<OrbitControlsImpl>(null!);
 
   const maxDistance = actualScale ? 100000000000 : 5000000;
-  const cameraFar = actualScale ? maxDistance * 1.1 : maxDistance * 30;
+  const cameraFar = actualScale ? maxDistance * 1.2 : maxDistance * 30;
   const spaceBackgroundDistance = actualScale ? maxDistance : maxDistance * 10;
   const spaceBackgroundStarTwinkle = actualScale ? 0.017 : 0.013;
 

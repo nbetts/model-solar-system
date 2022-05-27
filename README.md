@@ -26,6 +26,5 @@ Then go to <http://localhost:3000>.
   - disable shadows
   - disable antialiasing
   - disable logarithmic depth buffer
-- fix ring texture rendering
 - improve shadow rendering
 - figure out why postprocessing is preventing the gizmo helper from displaying.

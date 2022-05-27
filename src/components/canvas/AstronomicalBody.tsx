@@ -11,6 +11,7 @@ import { PointLight } from "three/src/lights/PointLight";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { DoubleSide } from "three/src/constants";
 import { DirectionalLight } from "three/src/lights/DirectionalLight";
+import { RingGeometry } from "three/src/geometries/RingGeometry";
 
 type Props = {
   cameraRef: MutableRefObject<PerspectiveCameraProps>;
@@ -28,6 +29,7 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
   const bodyPositionRef = useRef<Object3D>(null!);
   const bodyRef = useRef<Object3D>(null!);
   const bodyMeshRef = useRef<Mesh>(null!);
+  const ringGeometryRef = useRef<RingGeometry>(null!);
   const pointLightRef = useRef<PointLight>(null!);
   const directionalLightRef = useRef<DirectionalLight>(null!);
   const bodyTexture = props.textureSrc ? useTexture(props.textureSrc) : null;
@@ -65,6 +67,26 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
   }, [actualScale]);
 
   /**
+   * Ensure texture is mapped in a concentric way. Credits:
+   * - https://stackoverflow.com/a/43024222
+   * - https://stackoverflow.com/a/23659708
+   */
+  useEffect(() => {
+    if (ringTexture) {
+      const uvs = ringGeometryRef.current.attributes.uv.array as number[];
+      const phiSegments = ringGeometryRef.current.parameters.phiSegments;
+      const thetaSegments = ringGeometryRef.current.parameters.thetaSegments;
+
+      for (var c = 0, j = 0; j <= phiSegments; j++) {
+        for (var i = 0; i <= thetaSegments; i++) {
+          uvs[c++] = j / phiSegments;
+          uvs[c++] = i / thetaSegments;
+        }
+      }
+    }
+  }, [ringTexture]);
+
+  /**
    * Initialize lighting and shadows.
    */
   useEffect(() => {
@@ -99,6 +121,10 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
         cameraPosition.x = bodyPosition.x - props.radius * 4;
         cameraPosition.y = bodyPosition.y + props.radius * 1.25;
         cameraPosition.z = bodyPosition.z + props.radius * 4;
+
+        // Prevent the camera from being inside the bodies.
+        controlsRef.current.minDistance = props.radius + (cameraRef.current.near || 0);
+
         updateAppSetting("focusingBody", false);
       } else {
         cameraPosition.x += bodyPosition.x - oldBodyPosition.x;
@@ -170,7 +196,10 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
                     receiveShadow={!props.isLight}
                     onClick={focusBody}
                   >
-                    <ringGeometry args={[props.ring.innerRadius * 2, props.ring.outerRadius * 2, 32]} />
+                    <ringGeometry
+                      ref={ringGeometryRef}
+                      args={[props.ring.innerRadius * 2, props.ring.outerRadius * 2, 64]}
+                    />
                     <meshPhongMaterial
                       transparent
                       side={DoubleSide}
