@@ -28,9 +28,7 @@ type UserSettings = {
 };
 
 type ComponentRefs = {
-  lightRef?: MutableRefObject<PointLight>;
   lightSourceMeshRef?: RefObject<Mesh>;
-  bodyMeshRefs?: RefObject<Mesh>[];
 };
 
 type StoreProps = {

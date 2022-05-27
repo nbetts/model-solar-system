@@ -1,8 +1,7 @@
 import { PerspectiveCameraProps, useFrame } from "@react-three/fiber";
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { MutableRefObject, useEffect, useRef } from "react";
 import { AstronomicalBodyProps } from "src/data/astronomicalBodyData";
-import { Html, Line, useTexture } from "@react-three/drei";
-import generateOrbitPoints from "../../utils/generateOrbitPoints";
+import { Html, useTexture } from "@react-three/drei";
 import store, { updateAppSetting, updateRefSetting, updateUserSetting } from "src/data/store";
 import { Mesh } from "three/src/objects/Mesh";
 import { Object3D } from "three/src/core/Object3D";
@@ -12,6 +11,7 @@ import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { DoubleSide } from "three/src/constants";
 import { DirectionalLight } from "three/src/lights/DirectionalLight";
 import { RingGeometry } from "three/src/geometries/RingGeometry";
+import OrbitPath from "./OrbitPath";
 
 type Props = {
   cameraRef: MutableRefObject<PerspectiveCameraProps>;
@@ -21,9 +21,7 @@ type Props = {
 const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
   const showLabels = store.useState((s) => s.userSettings.showLabels);
   const showDebugInfo = store.useState((s) => s.userSettings.showDebugInfo);
-  const showOrbitPaths = store.useState((s) => s.userSettings.showOrbitPaths);
   const actualScale = store.useState((s) => s.userSettings.actualScale);
-  const [orbitPathPoints, setOrbitPathPoints] = useState<[number, number, number][]>([]);
 
   const bodyOrbitRef = useRef<Object3D>(null!);
   const bodyPositionRef = useRef<Object3D>(null!);
@@ -57,10 +55,6 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
   useEffect(() => {
     updateRefSetting("lightSourceMeshRef", bodyMeshRef);
   }, [props.isLight]);
-
-  useEffect(() => {
-    setOrbitPathPoints(generateOrbitPoints(props.orbit.radius));
-  }, [props.orbit.radius]);
 
   useEffect(() => {
     updateAppSetting("focusingBody", true);
@@ -143,14 +137,7 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
   return (
     <object3D rotation={[0, 0, props.orbit.inclination]}>
       <object3D ref={bodyOrbitRef}>
-        {showOrbitPaths && orbitPathPoints.length > 0 && (
-          <Line
-            points={orbitPathPoints}
-            color={props.orbit.color}
-            // transparent
-            // opacity={0.5}
-          />
-        )}
+        <OrbitPath color={props.orbit.color} radius={props.orbit.radius} />
         <object3D position={[props.orbit.radius, 0, 0]}>
           <object3D ref={bodyPositionRef} rotation={[0, 0, -props.orbit.inclination]}>
             {props.isLight && (

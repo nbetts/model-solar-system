@@ -1,12 +1,10 @@
-import { EffectComposer, GodRays, SelectiveBloom } from "@react-three/postprocessing";
-import { RefObject } from "react";
+import { EffectComposer, GodRays } from "@react-three/postprocessing";
 import store from "src/data/store";
-import { Mesh } from "three/src/objects/Mesh";
 
 const PostProcessingEffects = () => {
   const enableEffects = store.useState((s) => s.userSettings.enableEffects);
   const actualScale = store.useState((s) => s.userSettings.actualScale);
-  const { lightRef, lightSourceMeshRef, bodyMeshRefs } = store.useState((s) => s.componentRefs);
+  const { lightSourceMeshRef } = store.useState((s) => s.componentRefs);
 
   if (!enableEffects) {
     return null;
@@ -25,17 +23,6 @@ const PostProcessingEffects = () => {
       ) : (
         <></>
       )}
-      {/* {lightRef?.current && bodyMeshRefs && bodyMeshRefs?.length > 0 && bodyMeshRefs[0]?.current ? (
-        <SelectiveBloom
-          lights={[lightRef]}
-          // selection={[bodyMeshRefs]}
-          luminanceThreshold={0}
-          luminanceSmoothing={0.9}
-          height={300}
-        />
-      ) : (
-        <></>
-      )} */}
     </EffectComposer>
   );
 };
