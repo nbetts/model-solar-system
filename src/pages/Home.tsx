@@ -5,7 +5,7 @@ import StartupModal from "src/components/overlay/StartupModal";
 
 const Home = () => (
   <>
-    <Canvas shadows={false} gl={{ logarithmicDepthBuffer: true }}>
+    <Canvas shadows={false} gl={{ stencil: false, logarithmicDepthBuffer: true }}>
       <Scene />
     </Canvas>
     <InfoPanels />
