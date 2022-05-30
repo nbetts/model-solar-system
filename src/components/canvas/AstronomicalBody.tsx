@@ -117,7 +117,7 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
         cameraPosition.z = bodyPosition.z + props.radius * 4;
 
         // Prevent the camera from being inside the bodies.
-        controlsRef.current.minDistance = props.radius + cameraRef.current.near! * 2;
+        controlsRef.current.minDistance = props.radius + cameraRef.current.near!;
 
         updateAppSetting("focusingBody", false);
       } else {
@@ -200,6 +200,7 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
                       side={DoubleSide}
                       color={ringTexture ? undefined : props.color}
                       map={ringTexture}
+                      shininess={props.albedo}
                     />
                   </mesh>
                 )}

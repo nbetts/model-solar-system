@@ -19,19 +19,19 @@ const OrbitPath = ({ color, radius }: OrbitPathProps) => {
     const positions: number[] = [];
     const colors: number[] = [];
 
-    for (let i = 0; i < vertexCount; i++) {
+    // extract rgb from hex color
+    const r = (color >>> 16) & 0xff;
+    const g = (color >>> 8) & 0xff;
+    const b = (color >>> 0) & 0xff;
+
+    for (let i = 0; i < vertexCount + 1; i++) {
       const fraction = i / vertexCount;
       const step = fraction * TWO_PI;
 
       const x = radius * Math.cos(step);
       const z = radius * Math.sin(step);
       positions.push(x, 0, z);
-
-      // extract rgb from hex color
-      const r = (color >>> 16) & 0xff;
-      const g = (color >>> 8) & 0xff;
-      const b = (color >>> 0) & 0xff;
-      colors.push(r, g, b, (1 - fraction * 0.9) * 255);
+      colors.push(r, g, b, (1 - fraction) * 255);
     }
 
     orbitGeometryRef.current.setAttribute("position", new Float32BufferAttribute(positions, 3));

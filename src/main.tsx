@@ -13,8 +13,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <Global
       styles={(theme) => ({
         "#root": {
-          height: "100vh",
-          backgroundColor: "#030302",
+          // height: "100vh",
+          // backgroundColor: "#030302",
         },
         hr: {
           borderColor: theme.colors.dark[3],

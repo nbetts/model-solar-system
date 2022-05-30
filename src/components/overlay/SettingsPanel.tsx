@@ -116,11 +116,12 @@ const SettingsPanel = () => {
                 size="sm"
                 value={userSettings.focusedBody}
               >
-                {bodyNames.map((name) => (
+                {bodyNames.map(({ name, level }) => (
                   <Radio
                     key={name}
                     value={name}
                     label={name}
+                    style={{ marginLeft: `${level * 20}px` }}
                     onClick={() => {
                       updateUserSetting("focusedBody", name);
                       updateAppSetting("focusingBody", true);

@@ -1,16 +1,22 @@
 import { AstronomicalBodyProps } from "src/data/astronomicalBodyData";
 
-const getBodyName = (bodyNames: string[], body: AstronomicalBodyProps) => {
-  bodyNames.push(body.name);
+type BodyMap = {
+  name: string;
+  level: number;
+};
+
+const getBodyName = (bodyNames: BodyMap[], body: AstronomicalBodyProps, level: number) => {
+  bodyNames.push({ name: body.name, level });
 
   body.satellites.forEach((satellite) => {
-    getBodyName(bodyNames, satellite);
+    getBodyName(bodyNames, satellite, level + 1);
   });
 };
 
-const getBodyNames = (body: AstronomicalBodyProps) => {
-  const bodyNames: string[] = [];
-  getBodyName(bodyNames, body);
+const getBodyNames = (body: AstronomicalBodyProps): BodyMap[] => {
+  const bodyNames: BodyMap[] = [];
+  getBodyName(bodyNames, body, -1);
+  bodyNames[0].level = 0;
   return bodyNames;
 };
 

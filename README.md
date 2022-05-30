@@ -27,3 +27,4 @@ Then go to <http://localhost:3000>.
 - improve shadow rendering
 - figure out why postprocessing is preventing the gizmo helper from displaying.
 - fix issue where if toon scale is on first, then switch to actual scale, the orbit paths and star sometimes fail to render
+- use `RenderTexture` to render the star background separately, in order to reduce camera far and improve performance
