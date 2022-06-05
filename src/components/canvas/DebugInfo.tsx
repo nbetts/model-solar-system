@@ -1,21 +1,9 @@
-import { GizmoHelper, GizmoViewport, Stats } from "@react-three/drei";
+import { Stats } from "@react-three/drei";
 import store from "src/data/store";
 
 const DebugInfo = () => {
   const showDebugInfo = store.useState((s) => s.userSettings.showDebugInfo);
-
-  if (!showDebugInfo) {
-    return null;
-  }
-
-  return (
-    <>
-      <Stats />
-      <GizmoHelper alignment="bottom-left" margin={[80, 80]}>
-        <GizmoViewport axisColors={["red", "green", "blue"]} labelColor="white" />
-      </GizmoHelper>
-    </>
-  );
+  return showDebugInfo ? <Stats /> : null;
 };
 
 export default DebugInfo;

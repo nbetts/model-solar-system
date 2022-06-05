@@ -14,7 +14,7 @@ const StartupModal = () => {
     <Modal
       centered
       size="sm"
-      zIndex={2}
+      zIndex={Number.MAX_SAFE_INTEGER}
       opened={showingStartupModal}
       withCloseButton={false}
       overlayOpacity={0.5}

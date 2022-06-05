@@ -59,7 +59,7 @@ const SettingsPanel = () => {
         position: "absolute",
         top: 0,
         right: 0,
-        zIndex: 2,
+        zIndex: Number.MAX_SAFE_INTEGER,
         width: "200px",
         height: "100%",
         overflow: "scroll",

@@ -13,7 +13,15 @@ const StatsPanel = () => {
   const distance = cameraDistance.toLocaleString(undefined, { maximumFractionDigits: 0 });
 
   return (
-    <Card p="xs" style={{ position: "absolute", top: "6px", left: showDebugInfo ? "85px" : "6px", zIndex: 2 }}>
+    <Card
+      p="xs"
+      style={{
+        position: "absolute",
+        top: "6px",
+        left: showDebugInfo ? "85px" : "6px",
+        zIndex: Number.MAX_SAFE_INTEGER,
+      }}
+    >
       <Text size="sm">{distance} km</Text>
     </Card>
   );

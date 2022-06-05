@@ -17,14 +17,17 @@ Then go to <http://localhost:3000>.
 
 ## To do list
 
-- fix camera / logarithmic buffer (not currently working) <https://threejs.org/examples/#webgl_camera_logarithmicdepthbuffer>
+### Features
+
 - add lens flare: <https://threejs.org/examples/#webgl_lensflares>
 - add adaptive DPR (performance scaling): <https://github.com/pmndrs/drei#adaptivedpr>
 - add low/high performance toggle
   - disable shadows
   - disable antialiasing
-  - disable logarithmic depth buffer
+
+### Bugs
+
 - improve shadow rendering
-- figure out why postprocessing is preventing the gizmo helper from displaying.
-- fix issue where if toon scale is on first, then switch to actual scale, the orbit paths and star sometimes fail to render
-- use `RenderTexture` to render the star background separately, in order to reduce camera far and improve performance
+- fix issue where if toon scale is on first, then switch to actual scale, the orbit paths fail to render at certain angles
+- fix large orbit paths jittering when actual scale is enabled
+- fix sun rays jittering at large distances
