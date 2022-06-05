@@ -17,7 +17,7 @@ const PostProcessingEffects = () => {
           blur={3}
           decay={0.9}
           samples={actualScale ? 30 : 120}
-          density={0.96}
+          density={0.98}
           sun={lightSourceMeshRef.current}
         />
       ) : (

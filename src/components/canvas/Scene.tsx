@@ -15,10 +15,8 @@ const Scene = () => {
   const cameraRef = useRef<PerspectiveCameraProps>(null!);
   const controlsRef = useRef<OrbitControlsImpl>(null!);
 
-  const maxDistance = actualScale ? 100000000000 : 5000000;
-  const cameraFar = actualScale ? maxDistance * 1.2 : maxDistance * 30;
-  const spaceBackgroundDistance = actualScale ? maxDistance : maxDistance * 10;
-  const spaceBackgroundStarTwinkle = actualScale ? 0.017 : 0.013;
+  const maxDistance = actualScale ? 30000000000 : 7500000;
+  const cameraFar = maxDistance * 2;
 
   useFrame(() => {
     const { appSettings, userSettings } = store.getRawState();
@@ -39,7 +37,7 @@ const Scene = () => {
     <>
       <PerspectiveCamera ref={cameraRef} makeDefault position={[3, 1, 3]} near={50} far={cameraFar} />
       <OrbitControls ref={controlsRef} maxDistance={maxDistance} />
-      <SpaceBackground distance={spaceBackgroundDistance} starTwinkle={spaceBackgroundStarTwinkle} />
+      <SpaceBackground />
       <ambientLight color={sun.color} intensity={0.02} />
       <AstronomicalBody {...sun} cameraRef={cameraRef} controlsRef={controlsRef} />
       <DebugInfo />

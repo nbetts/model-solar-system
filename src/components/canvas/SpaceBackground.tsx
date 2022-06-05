@@ -1,12 +1,20 @@
-import { Stars } from "@react-three/drei";
+import { Environment, useTexture } from "@react-three/drei";
+import { BackSide } from "three/src/constants";
 
-type SpaceBackgroundProps = {
-  distance: number;
-  starTwinkle: number;
-};
+const galacticTilt = 60.19; // degrees
+const galacticTiltRadians = (galacticTilt * Math.PI) / 180;
 
-const SpaceBackground = ({ distance, starTwinkle }: SpaceBackgroundProps) => {
-  return <Stars radius={distance * 0.2} depth={distance} count={20000} factor={distance * starTwinkle} />;
+const SpaceBackground = () => {
+  const texture = useTexture("/assets/stars.jpeg");
+
+  return (
+    <Environment background near={1} far={100} resolution={3000}>
+      <mesh scale={10} rotation={[galacticTiltRadians, 0, 0]}>
+        <sphereGeometry args={[1, 64, 64]} />
+        <meshBasicMaterial map={texture} side={BackSide} />
+      </mesh>
+    </Environment>
+  );
 };
 
 export default SpaceBackground;
