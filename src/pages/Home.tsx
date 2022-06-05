@@ -8,11 +8,7 @@ import { LoadingOverlay } from "@mantine/core";
 
 const Home = () => (
   <Suspense fallback={<LoadingOverlay visible />}>
-    <Canvas
-      shadows={false}
-      gl={{ stencil: false, logarithmicDepthBuffer: true }}
-      style={{ position: "absolute", width: "100%", height: "100%", backgroundColor: "#030302" }}
-    >
+    <Canvas shadows={false} style={{ position: "absolute", width: "100%", height: "100%", backgroundColor: "#030302" }}>
       <Scene />
     </Canvas>
     <InfoPanels />

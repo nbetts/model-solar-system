@@ -25,7 +25,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           padding: "2px 6px",
           borderRadius: "4px",
           backgroundColor: theme.colors.dark[6],
-          opacity: 0.5,
+          opacity: 0.8,
           userSelect: "none",
           ":hover": {
             cursor: "pointer",

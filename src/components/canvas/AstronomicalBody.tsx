@@ -78,20 +78,20 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
         }
       }
     }
-  }, [ringTexture]);
+  }, [actualScale, ringTexture]);
 
   /**
    * Initialize lighting and shadows.
    */
   useEffect(() => {
     if (pointLightRef.current) {
-      pointLightRef.current.shadow.camera.far = 1500000;
+      pointLightRef.current.shadow.camera.far = 1500000; // approximately the farthest toon orbit radius
     }
 
     if (directionalLightRef.current) {
-      directionalLightRef.current.shadow.camera.far = 100000000000;
+      directionalLightRef.current.shadow.camera.far = 6000000000; // approximately the farthest real orbit radius
     }
-  }, [pointLightRef, directionalLightRef]);
+  }, [actualScale, pointLightRef, directionalLightRef]);
 
   useFrame(() => {
     const { appSettings, userSettings } = store.getRawState();
@@ -160,7 +160,7 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
               </>
             )}
             {showLabels && (
-              <Html position={[0, props.radius * 1.8, 0]} center zIndexRange={[1, 0]} wrapperClass="canvas-body-object">
+              <Html position={[0, props.radius * 1.8, 0]} center wrapperClass="canvas-body-object">
                 <p onClick={focusBody}>{props.name}</p>
               </Html>
             )}
@@ -193,7 +193,7 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
                   >
                     <ringGeometry
                       ref={ringGeometryRef}
-                      args={[props.ring.innerRadius * 2, props.ring.outerRadius * 2, 64]}
+                      args={[props.ring.innerRadius * 2, props.ring.outerRadius * 2, 128]}
                     />
                     <meshPhongMaterial
                       transparent
