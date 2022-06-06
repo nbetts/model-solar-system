@@ -19,6 +19,7 @@ type Props = {
 } & AstronomicalBodyProps;
 
 const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
+  const quality = store.useState((s) => s.userSettings.quality);
   const showLabels = store.useState((s) => s.userSettings.showLabels);
   const showDebugInfo = store.useState((s) => s.userSettings.showDebugInfo);
   const actualScale = store.useState((s) => s.userSettings.actualScale);
@@ -32,6 +33,8 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
   const directionalLightRef = useRef<DirectionalLight>(null!);
   const bodyTexture = props.textureSrc ? useTexture(props.textureSrc) : null;
   const ringTexture = props.ring?.textureSrc ? useTexture(props.ring.textureSrc) : null;
+
+  const divisionQuality = quality === "High" ? 32 : 16;
 
   const focusBody = () => {
     if (store.getRawState().userSettings.focusedBody !== props.name) {
@@ -78,7 +81,7 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
         }
       }
     }
-  }, [actualScale, ringTexture]);
+  }, [divisionQuality, actualScale, ringTexture]);
 
   /**
    * Initialize lighting and shadows.
@@ -176,7 +179,7 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
               >
                 {showDebugInfo && <axesHelper args={[props.radius * 1.6]} />}
                 <mesh ref={bodyMeshRef} castShadow={!props.isLight} receiveShadow={!props.isLight} onClick={focusBody}>
-                  <sphereGeometry args={[props.radius, 64, 32]} />
+                  <sphereGeometry args={[props.radius, divisionQuality * 2, divisionQuality]} />
                   <meshPhongMaterial
                     color={bodyTexture ? undefined : props.color}
                     map={bodyTexture}
@@ -193,7 +196,7 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
                   >
                     <ringGeometry
                       ref={ringGeometryRef}
-                      args={[props.ring.innerRadius * 2, props.ring.outerRadius * 2, 128]}
+                      args={[props.ring.innerRadius * 2, props.ring.outerRadius * 2, divisionQuality * 4]}
                     />
                     <meshPhongMaterial
                       transparent

@@ -1,8 +1,9 @@
 import { Store } from "pullstate";
-import { MutableRefObject, RefObject } from "react";
-import { PointLight } from "three/src/lights/PointLight";
+import { RefObject } from "react";
 import { Mesh } from "three/src/objects/Mesh";
 import { AstronomicalBodyProps, realSolarSystemData, toonSolarSystemData } from "./astronomicalBodyData";
+
+type Quality = "Low" | "Med" | "High";
 
 type AppSettings = {
   timeStepModifier: number;
@@ -21,8 +22,8 @@ type UserSettings = {
   showOrbitPaths: boolean;
   showDebugInfo: boolean;
   enableMusic: boolean;
-  enableEffects: boolean;
   actualScale: boolean;
+  quality: Quality;
   timeSpeedModifier: number; // range [0-1].
   focusedBody: string; // body display name.
 };
@@ -54,8 +55,8 @@ const DEFAULT_USER_SETTINGS: UserSettings = {
   showOrbitPaths: true,
   showDebugInfo: false,
   enableMusic: true,
-  enableEffects: true,
   actualScale: false,
+  quality: "High",
   timeSpeedModifier: 0.25,
   focusedBody: "Mars",
 } as const;
@@ -76,8 +77,8 @@ const store = new Store<StoreProps>({
     showOrbitPaths: loadUserSetting("showOrbitPaths", DEFAULT_USER_SETTINGS.showOrbitPaths),
     showDebugInfo: loadUserSetting("showDebugInfo", DEFAULT_USER_SETTINGS.showDebugInfo),
     enableMusic: loadUserSetting("enableMusic", DEFAULT_USER_SETTINGS.enableMusic),
-    enableEffects: loadUserSetting("enableEffects", DEFAULT_USER_SETTINGS.enableEffects),
     actualScale: loadUserSetting("actualScale", DEFAULT_USER_SETTINGS.actualScale),
+    quality: "High", // todo: currently always set to high by default because low/medium default results in quality not changing properly
     timeSpeedModifier: loadUserSetting("timeSpeedModifier", DEFAULT_USER_SETTINGS.timeSpeedModifier),
     focusedBody: loadUserSetting("focusedBody", DEFAULT_USER_SETTINGS.focusedBody),
   },
@@ -105,13 +106,13 @@ store.subscribe(
 );
 
 store.subscribe(
-  (s) => s.userSettings.enableEffects,
-  (value) => saveUserSetting("enableEffects", value)
+  (s) => s.userSettings.actualScale,
+  (value) => saveUserSetting("actualScale", value)
 );
 
 store.subscribe(
-  (s) => s.userSettings.actualScale,
-  (value) => saveUserSetting("actualScale", value)
+  (s) => s.userSettings.quality,
+  (value) => saveUserSetting("quality", value)
 );
 
 store.subscribe(

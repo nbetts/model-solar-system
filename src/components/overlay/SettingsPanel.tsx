@@ -7,6 +7,7 @@ import {
   createStyles,
   Radio,
   RadioGroup,
+  SegmentedControl,
   Slider,
   Stack,
   Text,
@@ -86,19 +87,17 @@ const SettingsPanel = () => {
                 onChange={(event) => updateUserSetting("enableMusic", event.currentTarget.checked)}
               />
               <Checkbox
-                label="Effects"
-                checked={userSettings.enableEffects}
-                onChange={(event) => updateUserSetting("enableEffects", event.currentTarget.checked)}
-              />
-              <Checkbox
                 label="Actual scale"
                 checked={userSettings.actualScale}
                 onChange={(event) => updateUserSetting("actualScale", event.currentTarget.checked)}
               />
-              <Checkbox
-                label="Debug info"
-                checked={userSettings.showDebugInfo}
-                onChange={(event) => updateUserSetting("showDebugInfo", event.currentTarget.checked)}
+              <Text size="sm" mt="sm">
+                Qualtiy
+              </Text>
+              <SegmentedControl
+                value={userSettings.quality}
+                onChange={(value) => updateUserSetting("quality", value)}
+                data={["Low", "Med", "High"]}
               />
               <hr />
               <Text size="sm">Simulation speed</Text>

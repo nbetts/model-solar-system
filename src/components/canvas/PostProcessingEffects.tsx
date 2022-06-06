@@ -2,17 +2,13 @@ import { EffectComposer, GodRays } from "@react-three/postprocessing";
 import store from "src/data/store";
 
 const PostProcessingEffects = () => {
-  const enableEffects = store.useState((s) => s.userSettings.enableEffects);
+  const quality = store.useState((s) => s.userSettings.quality);
   const actualScale = store.useState((s) => s.userSettings.actualScale);
   const { lightSourceMeshRef } = store.useState((s) => s.componentRefs);
 
-  if (!enableEffects) {
-    return null;
-  }
-
   return (
     <EffectComposer>
-      {lightSourceMeshRef?.current ? (
+      {quality === "High" && lightSourceMeshRef?.current ? (
         <GodRays
           blur={3}
           decay={0.9}
