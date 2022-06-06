@@ -22,7 +22,6 @@ const Home = () => {
       <Canvas
         shadows={false}
         // shadows={quality === 'High'} // todo: enable this once I've fixed shadow rendering for both directional and point light types
-        gl={{ antialias: false }}
         dpr={dpr}
         style={{ position: "absolute", width: "100%", height: "100%", backgroundColor: "#030302" }}
       >

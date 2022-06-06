@@ -70,7 +70,6 @@ const SettingsPanel = () => {
         <Accordion multiple initialItem={0} iconPosition="right" classNames={classes}>
           <Accordion.Item label="Settings">
             <Stack spacing="xs" py="xs">
-              <Checkbox label="Fullscreen" checked={fullscreen} onChange={toggleFullscreen} />
               <Checkbox
                 label="Labels"
                 checked={userSettings.showLabels}
@@ -86,6 +85,7 @@ const SettingsPanel = () => {
                 checked={userSettings.enableMusic}
                 onChange={(event) => updateUserSetting("enableMusic", event.currentTarget.checked)}
               />
+              <Checkbox label="Fullscreen" checked={fullscreen} onChange={toggleFullscreen} />
               <Checkbox
                 label="Actual scale"
                 checked={userSettings.actualScale}
