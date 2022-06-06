@@ -1,14 +1,25 @@
 import { Anchor, Button, Image, Modal, Stack, Text } from "@mantine/core";
+import { useEffect, useRef } from "react";
 import store, { updateAppSetting } from "src/data/store";
-// import faviconUrl from "src/assets/favicon.svg";
 
-const StartupModal = () => {
+type StartupModalProps = {
+  loading: boolean;
+};
+
+const StartupModal = ({ loading }: StartupModalProps) => {
   const showingStartupModal = store.useState((s) => s.appSettings.showingStartupModal);
+  const buttonRef = useRef<HTMLButtonElement>(null!);
 
   const closeModal = () => {
     updateAppSetting("showingStartupModal", false);
     updateAppSetting("focusingBody", true);
   };
+
+  useEffect(() => {
+    if (!loading) {
+      buttonRef.current.focus();
+    }
+  }, [loading]);
 
   return (
     <Modal
@@ -35,8 +46,8 @@ const StartupModal = () => {
         <Text align="center" my="lg">
           A model solar system built with Three.js, React and React Three Fiber.
         </Text>
-        <Button data-autofocus onClick={closeModal}>
-          Jump in!
+        <Button ref={buttonRef} data-autofocus onClick={closeModal} loading={loading}>
+          {loading ? "Loading" : "Jump in!"}
         </Button>
       </Stack>
     </Modal>

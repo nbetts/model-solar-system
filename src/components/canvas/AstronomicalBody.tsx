@@ -22,6 +22,8 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
   const showLabels = store.useState((s) => s.userSettings.showLabels);
   const showDebugInfo = store.useState((s) => s.userSettings.showDebugInfo);
   const actualScale = store.useState((s) => s.userSettings.actualScale);
+  const quality = store.useState((s) => s.userSettings.quality);
+  const divisionQuality = quality === "High" ? 32 : 16;
 
   const bodyOrbitRef = useRef<Object3D>(null!);
   const bodyPositionRef = useRef<Object3D>(null!);
@@ -32,6 +34,11 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
   const directionalLightRef = useRef<DirectionalLight>(null!);
   const bodyTexture = props.textureSrc ? useTexture(props.textureSrc) : null;
   const ringTexture = props.ring?.textureSrc ? useTexture(props.ring.textureSrc) : null;
+
+  // useFrame refs
+  const currentBodyPositionVectorRef = useRef<Vector3>(new Vector3());
+  const nextBodyPositionVectorRef = useRef<Vector3>(new Vector3());
+  const bodyFocusVectorRef = useRef<Vector3>(new Vector3());
 
   const focusBody = () => {
     if (store.getRawState().userSettings.focusedBody !== props.name) {
@@ -60,6 +67,10 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
     updateAppSetting("focusingBody", true);
   }, [actualScale]);
 
+  useEffect(() => {
+    bodyFocusVectorRef.current.set(props.radius * 4, props.radius * 1.25, props.radius * 4);
+  }, [props.radius]);
+
   /**
    * Ensure texture is mapped in a concentric way. Credits:
    * - https://stackoverflow.com/a/43024222
@@ -78,7 +89,7 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
         }
       }
     }
-  }, [actualScale, ringTexture]);
+  }, [divisionQuality, actualScale, ringTexture]);
 
   /**
    * Initialize lighting and shadows.
@@ -96,8 +107,7 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
   useFrame(() => {
     const { appSettings, userSettings } = store.getRawState();
 
-    const oldBodyPosition = new Vector3();
-    bodyRef.current.getWorldPosition(oldBodyPosition);
+    bodyRef.current.getWorldPosition(currentBodyPositionVectorRef.current);
 
     if (userSettings.timeSpeedModifier > 0) {
       bodyOrbitRef.current.rotation.y += props.orbit.rotationPeriod * appSettings.timeStep;
@@ -107,23 +117,22 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
 
     if (userSettings.focusedBody === props.name) {
       const cameraPosition = cameraRef.current.position as Vector3;
-      const bodyPosition = new Vector3();
-      bodyRef.current.getWorldPosition(bodyPosition);
-      controlsRef.current.target = bodyPosition;
+      bodyRef.current.getWorldPosition(nextBodyPositionVectorRef.current);
+      controlsRef.current.target = nextBodyPositionVectorRef.current;
 
       if (appSettings.focusingBody) {
-        cameraPosition.x = bodyPosition.x - props.radius * 4;
-        cameraPosition.y = bodyPosition.y + props.radius * 1.25;
-        cameraPosition.z = bodyPosition.z + props.radius * 4;
+        cameraPosition.x = nextBodyPositionVectorRef.current.x - bodyFocusVectorRef.current.x;
+        cameraPosition.y = nextBodyPositionVectorRef.current.y + bodyFocusVectorRef.current.y;
+        cameraPosition.z = nextBodyPositionVectorRef.current.z + bodyFocusVectorRef.current.z;
 
         // Prevent the camera from being inside the bodies.
         controlsRef.current.minDistance = props.radius + cameraRef.current.near!;
 
         updateAppSetting("focusingBody", false);
       } else {
-        cameraPosition.x += bodyPosition.x - oldBodyPosition.x;
-        cameraPosition.y += bodyPosition.y - oldBodyPosition.y;
-        cameraPosition.z += bodyPosition.z - oldBodyPosition.z;
+        cameraPosition.x += nextBodyPositionVectorRef.current.x - currentBodyPositionVectorRef.current.x;
+        cameraPosition.y += nextBodyPositionVectorRef.current.y - currentBodyPositionVectorRef.current.y;
+        cameraPosition.z += nextBodyPositionVectorRef.current.z - currentBodyPositionVectorRef.current.z;
       }
     }
 
@@ -176,7 +185,7 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
               >
                 {showDebugInfo && <axesHelper args={[props.radius * 1.6]} />}
                 <mesh ref={bodyMeshRef} castShadow={!props.isLight} receiveShadow={!props.isLight} onClick={focusBody}>
-                  <sphereGeometry args={[props.radius, 64, 32]} />
+                  <sphereGeometry args={[props.radius, divisionQuality * 2, divisionQuality]} />
                   <meshPhongMaterial
                     color={bodyTexture ? undefined : props.color}
                     map={bodyTexture}
@@ -193,7 +202,7 @@ const AstronomicalBody = ({ cameraRef, controlsRef, ...props }: Props) => {
                   >
                     <ringGeometry
                       ref={ringGeometryRef}
-                      args={[props.ring.innerRadius * 2, props.ring.outerRadius * 2, 128]}
+                      args={[props.ring.innerRadius * 2, props.ring.outerRadius * 2, divisionQuality * 4]}
                     />
                     <meshPhongMaterial
                       transparent
